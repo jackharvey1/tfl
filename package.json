@@ -1,0 +1,18 @@
+{
+	"name": "tfl",
+	"version": "1.0.0",
+	"description": "",
+	"main": "tfl.js",
+	"dependencies": {
+		"dustjs-linkedin": "^2.7.5",
+		"express": "^4.14.0",
+		"morgan": "^1.7.0",
+		"nodemon": "^1.11.0",
+	},
+	"devDependencies": {},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC"
+}
