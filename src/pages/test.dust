@@ -1,1 +1,8 @@
-<p>works</p>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../styles/test.css" />
+</head>
+<body>
+    <p>changed</p>
+</body>
+</html>
