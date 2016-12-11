@@ -1,17 +1,18 @@
 {
   "name": "tfl",
   "version": "1.0.0",
-  "main": "tfl.js",
+  "main": "api.js",
   "dependencies": {
     "dustjs-linkedin": "^2.7.5",
     "express": "^4.14.0",
+    "mongoose": "^4.7.2",
     "morgan": "^1.7.0"
   },
   "devDependencies": {
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "watch": "nodemon tfl.js ",
+    "watch": "nodemon api.js",
     "test": "mocha --recursive"
   },
   "author": "",
