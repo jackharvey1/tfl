@@ -1,0 +1,754 @@
+[
+    {
+        "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+        "naptanId": "940GZZLUBLR",
+        "modes": [
+            "tube"
+        ],
+        "icsCode": "1000024",
+        "stopType": "NaptanMetroStation",
+        "stationNaptan": "940GZZLUBLR",
+        "hubNaptanCode": "HUBBHO",
+        "lines": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.Identifier, Tfl.Api.Presentation.Entities",
+                "id": "victoria",
+                "name": "Victoria",
+                "uri": "/Line/victoria",
+                "type": "Line"
+            }
+        ],
+        "lineGroup": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineGroup, Tfl.Api.Presentation.Entities",
+                "stationAtcoCode": "940GZZLUBLR",
+                "lineIdentifier": [
+                    "victoria"
+                ]
+            }
+        ],
+        "lineModeGroups": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineModeGroup, Tfl.Api.Presentation.Entities",
+                "modeName": "tube",
+                "lineIdentifier": [
+                    "victoria"
+                ]
+            }
+        ],
+        "status": true,
+        "id": "940GZZLUBLR",
+        "commonName": "Blackhorse Road Underground Station",
+        "placeType": "StopPoint",
+        "additionalProperties": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "ServiceInfo",
+                "key": "Night",
+                "sourceSystemKey": "TransXchangeETL",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Help Points",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0 on platforms, 0 in ticket halls, 0 elsewhere"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Payphones",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Geo",
+                "key": "Zone",
+                "sourceSystemKey": "StaticObjects",
+                "value": "3"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Bridge",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Ticket Halls",
+                "sourceSystemKey": "StaticObjects",
+                "value": "1"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Address",
+                "key": "PhoneNo",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0845 330 9880"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Photo Booths",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Waiting Room",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Car park",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Other Facilities",
+                "sourceSystemKey": "StaticObjects",
+                "value": "post office style queuing for tickets, routeways platform to ticket hall."
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Address",
+                "key": "Address",
+                "sourceSystemKey": "StaticObjects",
+                "value": "Blackhorse Road Underground Station,London Underground Ltd.,Blackhorse Rd,London,E17 6ND"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "ASDA Click and Collect",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Cash Machines",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Gates",
+                "sourceSystemKey": "StaticObjects",
+                "value": "5"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Lifts",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Toilets",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Escalators",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "WiFi",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            }
+        ],
+        "children": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUBLR1",
+                "modes": [],
+                "icsCode": "1000024",
+                "stationNaptan": "940GZZLUBLR",
+                "hubNaptanCode": "HUBBHO",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUBLR1",
+                "commonName": "Blackhorse Road Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            }
+        ],
+        "lat": 51.586919,
+        "lon": -0.04115
+    },
+    {
+        "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+        "naptanId": "940GZZLUBXN",
+        "modes": [
+            "tube"
+        ],
+        "icsCode": "1000031",
+        "stopType": "NaptanMetroStation",
+        "stationNaptan": "940GZZLUBXN",
+        "hubNaptanCode": "HUBBRX",
+        "lines": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.Identifier, Tfl.Api.Presentation.Entities",
+                "id": "victoria",
+                "name": "Victoria",
+                "uri": "/Line/victoria",
+                "type": "Line"
+            }
+        ],
+        "lineGroup": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineGroup, Tfl.Api.Presentation.Entities",
+                "stationAtcoCode": "940GZZLUBXN",
+                "lineIdentifier": [
+                    "victoria"
+                ]
+            }
+        ],
+        "lineModeGroups": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineModeGroup, Tfl.Api.Presentation.Entities",
+                "modeName": "tube",
+                "lineIdentifier": [
+                    "victoria"
+                ]
+            }
+        ],
+        "status": true,
+        "id": "940GZZLUBXN",
+        "commonName": "Brixton Underground Station",
+        "placeType": "StopPoint",
+        "additionalProperties": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "ServiceInfo",
+                "key": "Night",
+                "sourceSystemKey": "TransXchangeETL",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Help Points",
+                "sourceSystemKey": "StaticObjects",
+                "value": "6 on platforms, 0 in ticket halls, 1 elsewhere"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Address",
+                "key": "PhoneNo",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0845 330 9880"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Waiting Room",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Cash Machines",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Escalators",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Geo",
+                "key": "Zone",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Bridge",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Car park",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Toilets",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Ticket Halls",
+                "sourceSystemKey": "StaticObjects",
+                "value": "1"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Address",
+                "key": "Address",
+                "sourceSystemKey": "StaticObjects",
+                "value": "Brixton Underground Station,London Underground Ltd.,Brixton Rd,London,SW9 8HE"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Gates",
+                "sourceSystemKey": "StaticObjects",
+                "value": "9"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Lifts",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Photo Booths",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Other Facilities",
+                "sourceSystemKey": "StaticObjects",
+                "value": "electronic whiteboards in ticket hall, routeways platform to ticket hall."
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "WiFi",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Payphones",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Accessibility",
+                "key": "AccessViaLift",
+                "sourceSystemKey": "LRAD",
+                "value": "Yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Accessibility",
+                "key": "BlueBadgeCarParkSpaces",
+                "sourceSystemKey": "LRAD",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Accessibility",
+                "key": "LimitedCapacityLift",
+                "sourceSystemKey": "LRAD",
+                "value": "No"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Accessibility",
+                "key": "SpecificEntranceRequired",
+                "sourceSystemKey": "LRAD",
+                "value": "No"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Accessibility",
+                "key": "TaxiRankOutsideStation",
+                "sourceSystemKey": "LRAD",
+                "value": "No"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Accessibility",
+                "key": "Toilet",
+                "sourceSystemKey": "LRAD",
+                "value": "No"
+            }
+        ],
+        "children": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUBXN1",
+                "modes": [],
+                "icsCode": "1000031",
+                "stationNaptan": "940GZZLUBXN",
+                "hubNaptanCode": "HUBBRX",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUBXN1",
+                "commonName": "Brixton Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            }
+        ],
+        "lat": 51.462618,
+        "lon": -0.114888
+    },
+    {
+        "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+        "naptanId": "940GZZLUEUS",
+        "modes": [
+            "tube"
+        ],
+        "icsCode": "1000077",
+        "stopType": "NaptanMetroStation",
+        "stationNaptan": "940GZZLUEUS",
+        "hubNaptanCode": "HUBEUS",
+        "lines": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.Identifier, Tfl.Api.Presentation.Entities",
+                "id": "northern",
+                "name": "Northern",
+                "uri": "/Line/northern",
+                "type": "Line"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.Identifier, Tfl.Api.Presentation.Entities",
+                "id": "victoria",
+                "name": "Victoria",
+                "uri": "/Line/victoria",
+                "type": "Line"
+            }
+        ],
+        "lineGroup": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineGroup, Tfl.Api.Presentation.Entities",
+                "stationAtcoCode": "940GZZLUEUS",
+                "lineIdentifier": [
+                    "northern"
+                ]
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineGroup, Tfl.Api.Presentation.Entities",
+                "stationAtcoCode": "940GZZLUEUS",
+                "lineIdentifier": [
+                    "victoria"
+                ]
+            }
+        ],
+        "lineModeGroups": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineModeGroup, Tfl.Api.Presentation.Entities",
+                "modeName": "tube",
+                "lineIdentifier": [
+                    "northern",
+                    "victoria"
+                ]
+            }
+        ],
+        "status": true,
+        "id": "940GZZLUEUS",
+        "commonName": "Euston Underground Station",
+        "placeType": "StopPoint",
+        "additionalProperties": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "ServiceInfo",
+                "key": "Night",
+                "sourceSystemKey": "TransXchangeETL",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Address",
+                "key": "PhoneNo",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0845 330 9880"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Bridge",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Help Points",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0 on platforms, 0 in ticket halls, 0 elsewhere"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Other Facilities",
+                "sourceSystemKey": "StaticObjects",
+                "value": "electronic whiteboards in ticket hall, post office style queuing for tickets."
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Payphones",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Boarding Ramps",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes London Overgrounnd and National Rail only"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Toilets",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Waiting Room",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "WiFi",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Geo",
+                "key": "Zone",
+                "sourceSystemKey": "StaticObjects",
+                "value": "1"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Address",
+                "key": "Address",
+                "sourceSystemKey": "StaticObjects",
+                "value": "Euston Underground Station,London Underground Ltd.,Eversholt St,London,NW1 2DU"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Cash Machines",
+                "sourceSystemKey": "StaticObjects",
+                "value": "2"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Gates",
+                "sourceSystemKey": "StaticObjects",
+                "value": "16"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Euro Cash Machines",
+                "sourceSystemKey": "StaticObjects",
+                "value": "yes"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Car park",
+                "sourceSystemKey": "StaticObjects",
+                "value": "no"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Escalators",
+                "sourceSystemKey": "StaticObjects",
+                "value": "10"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Lifts",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Photo Booths",
+                "sourceSystemKey": "StaticObjects",
+                "value": "0"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.AdditionalProperties, Tfl.Api.Presentation.Entities",
+                "category": "Facility",
+                "key": "Ticket Halls",
+                "sourceSystemKey": "StaticObjects",
+                "value": "1"
+            }
+        ],
+        "children": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUEUS2",
+                "modes": [],
+                "icsCode": "1000077",
+                "stationNaptan": "940GZZLUEUS",
+                "hubNaptanCode": "HUBEUS",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUEUS2",
+                "commonName": "Euston Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUEUS3",
+                "modes": [],
+                "icsCode": "1000077",
+                "stationNaptan": "940GZZLUEUS",
+                "hubNaptanCode": "HUBEUS",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUEUS3",
+                "commonName": "Euston Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUEUS4",
+                "modes": [],
+                "icsCode": "1000077",
+                "stationNaptan": "940GZZLUEUS",
+                "hubNaptanCode": "HUBEUS",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUEUS4",
+                "commonName": "Euston Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUEUS5",
+                "modes": [],
+                "icsCode": "1000077",
+                "stationNaptan": "940GZZLUEUS",
+                "hubNaptanCode": "HUBEUS",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUEUS5",
+                "commonName": "Euston Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUEUS1",
+                "modes": [],
+                "icsCode": "1000077",
+                "stationNaptan": "940GZZLUEUS",
+                "hubNaptanCode": "HUBEUS",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUEUS1",
+                "commonName": "Euston Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 51.528055,
+                "lon": -0.132182
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.StopPoint, Tfl.Api.Presentation.Entities",
+                "naptanId": "9400ZZLUEUS6",
+                "modes": [],
+                "icsCode": "1000077",
+                "stationNaptan": "940GZZLUEUS",
+                "hubNaptanCode": "HUBEUS",
+                "lines": [],
+                "lineGroup": [],
+                "lineModeGroups": [],
+                "status": true,
+                "id": "9400ZZLUEUS6",
+                "commonName": "Euston Underground Station",
+                "placeType": "StopPoint",
+                "additionalProperties": [],
+                "children": [],
+                "lat": 0,
+                "lon": 0
+            }
+        ],
+        "lat": 51.528055,
+        "lon": -0.132182
+    }
+]

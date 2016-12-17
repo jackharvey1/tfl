@@ -1,0 +1,59 @@
+[
+    {
+        "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+        "id": "bakerloo",
+        "name": "Bakerloo",
+        "modeName": "tube",
+        "disruptions": [],
+        "created": "2016-12-14T04:19:49.553Z",
+        "modified": "2016-12-14T04:19:49.553Z",
+        "lineStatuses": [],
+        "routeSections": [],
+        "serviceTypes": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+                "name": "Regular",
+                "uri": "/Line/Route?ids=Bakerloo&serviceTypes=Regular"
+            }
+        ]
+    }, {
+        "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+        "id": "hammersmith-city",
+        "name": "Hammersmith & City",
+        "modeName": "tube",
+        "disruptions": [],
+        "created": "2016-12-14T04:19:49.52Z",
+        "modified": "2016-12-14T04:19:49.52Z",
+        "lineStatuses": [],
+        "routeSections": [],
+        "serviceTypes": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+                "name": "Regular",
+                "uri": "/Line/Route?ids=Hammersmith & City&serviceTypes=Regular"
+            }
+        ]
+    }, {
+        "$type": "Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities",
+        "id": "jubilee",
+        "name": "Jubilee",
+        "modeName": "tube",
+        "disruptions": [],
+        "created": "2016-12-14T04:19:49.477Z",
+        "modified": "2016-12-14T04:19:49.477Z",
+        "lineStatuses": [],
+        "routeSections": [],
+        "serviceTypes": [
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+                "name": "Regular",
+                "uri": "/Line/Route?ids=Jubilee&serviceTypes=Regular"
+            },
+            {
+                "$type": "Tfl.Api.Presentation.Entities.LineServiceTypeInfo, Tfl.Api.Presentation.Entities",
+                "name": "Night",
+                "uri": "/Line/Route?ids=Jubilee&serviceTypes=Night"
+            }
+        ]
+    }
+]
