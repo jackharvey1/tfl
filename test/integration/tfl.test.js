@@ -1,4 +1,5 @@
 /* global sandbox, expect*/
+var mongoose = require('mongoose');
 var tfl = require('../../src/js/tfl');
 var config = require('../../config/config.js');
 var db = require('../../src/db');
@@ -37,20 +38,16 @@ describe('TfL calls', function() {
         });
     });
 
-    describe('for stations', function() {
-        beforeEach(function() {
-            sandbox.stub(tfl, 'makeRequest', function() {
-                return Promise.resolve(stationsOnVictoria);
-            });
-        });
-
+    describe('for stations on one line', function() {
         afterEach(function() {
-            db.retrieveAllLines.restore();
-            tfl.getAllStationsOnLine.restore();
             tfl.makeRequest.restore();
         });
 
         it('should make the call for one station correctly', function() {
+            sandbox.stub(tfl, 'makeRequest', function() {
+                return Promise.resolve(stationsOnVictoria);
+            });
+
             return tfl.getAllStationsOnLine('victoria').then((stations) => {
                 return expect(stations).to.deep.equal([
                     {
@@ -74,6 +71,13 @@ describe('TfL calls', function() {
                     }
                 ]);
             });
+        });
+    });
+
+    describe('calls for stations on all lines', function () {
+        afterEach(function() {
+            db.retrieveAllLines.restore();
+            tfl.getAllStationsOnLine.restore();
         });
 
         it('should make the call for all stations correctly', function() {

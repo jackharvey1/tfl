@@ -90,11 +90,9 @@ function getAllLines() {
 
     console.log('Retrieving all lines');
 
-    //module.exports is needed for the tests, is there a better way?
     return module.exports.makeRequest(options).then((data) => {
         var lines = [];
         for (var i = 0; i < data.length; i++) {
-            console.log(data[i].name);
             lines.push({
                 name: data[i].name,
                 id: data[i].id

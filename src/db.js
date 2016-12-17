@@ -28,7 +28,6 @@ var Line = mongoose.model('Line', lineSchema);
 var Station = mongoose.model('Station', stationSchema);
 var Arrivals = mongoose.model('Arrivals', arrivalSchema);
 
-// I'm saving stations twice because they're on multiple lines
 function saveAllArrivalsAt(station) {
     return new Promise((resolve, reject) => {
         tfl.getAllArrivalsAt(station).then((arrivals) => {
@@ -101,7 +100,6 @@ function saveAllStationsOnAllLines() {
 }
 
 function retrieveAllLines() {
-    console.log('in db');
     return new Promise((resolve, reject) => {
         Line.find((err, lines) => {
             if (err) {
