@@ -1,5 +1,5 @@
 /* global sandbox, expect */
-var assert = require('assert');
-var chai = require('chai');
+const assert = require('assert');
+const chai = require('chai');
 
-var expect = chai.expect;
+const expect = chai.expect;

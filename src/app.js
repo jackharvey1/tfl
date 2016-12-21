@@ -1,4 +1,6 @@
-const express = require('express')
+'use strict';
+
+const express = require('express');
 require('console-stamp')(console, 'HH:MM:ss.l');
 const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
@@ -8,7 +10,7 @@ const tfl = require('./js/tfl');
 const db = require('./db');
 
 const app = express();
-app.use(morgan('combined'))
+app.use(morgan('combined'));
 
 app.get('/', (req, res) => {
     fs.readFile('pages/test.dust', "utf8", (err, data) => {
@@ -19,7 +21,7 @@ app.get('/', (req, res) => {
         dust.render("test", {}, function(err, html) {
             res.send(html);
         });
-    })
+    });
 });
 
 app.get('/lines', (req, res) => {

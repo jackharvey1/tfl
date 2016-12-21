@@ -1,5 +1,6 @@
 # TODO
 
+Use `node-cron`
 Add ESLint
 Make a note of when the arrivals have been saved until somewhere
 Do not create duplicate arrivals

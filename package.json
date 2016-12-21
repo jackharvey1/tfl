@@ -11,11 +11,12 @@
     "morgan": "^1.7.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.12.2",
+    "lolex": "^1.5.2",
     "mocha": "^3.2.0",
     "sinon": "^1.17.6",
-    "chai": "^3.5.0",
-    "sinon-chai": "^2.8.0",
-    "lolex": "^1.5.2"
+    "sinon-chai": "^2.8.0"
   },
   "scripts": {
     "watch": "nodemon app.js",

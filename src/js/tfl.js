@@ -1,3 +1,5 @@
+'use strict';
+
 const https = require('https');
 const flatten = require('lodash/flattenDeep');
 const db = require('./../db');
@@ -9,12 +11,10 @@ const appKey = config.app.key;
 
 module.exports.getAllArrivalsAtAllStations = function() {
     return db.retrieveAllStationsOnAllLines().then((stations) => {
-        stations = stations.map((station) => {
-            return station.naptanId;
-        });
-
         return Promise.all(
-            stations.map(module.exports.getAllArrivalsAt)
+            stations.map((station) => {
+                return station.naptanId;
+            }).map(module.exports.getAllArrivalsAt)
         ).then((arrivals) => {
             return flatten(arrivals);
         });
@@ -22,16 +22,17 @@ module.exports.getAllArrivalsAtAllStations = function() {
 };
 
 module.exports.getAllArrivalsAt = function(stationNaptanId) {
-    options = {
+    const options = {
         host: 'api.tfl.gov.uk',
         path: `/StopPoint/${stationNaptanId}/Arrivals?app_id=${appId}&app_key=${appKey}`
     };
 
     console.log(`Getting all arrivals at ${stationNaptanId}`);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         return module.exports.makeRequest(options).then((data) => {
-            var arrivals = [];
+            const arrivals = [];
+
             data.forEach((datum) => {
                 arrivals.push({
                     arrivalId: datum.id,
@@ -47,12 +48,10 @@ module.exports.getAllArrivalsAt = function(stationNaptanId) {
 
 module.exports.getAllStationsOnAllLines = function() {
     return db.retrieveAllLines().then((lines) => {
-        lines = lines.map((line) => {
-            return line.id;
-        });
-
         return Promise.all(
-            lines.map(module.exports.getAllStationsOnLine)
+            lines.map((line) => {
+                return line.id;
+            }).map(module.exports.getAllStationsOnLine)
         ).then((stations) => {
             return flatten(stations);
         });
@@ -60,27 +59,27 @@ module.exports.getAllStationsOnAllLines = function() {
 };
 
 module.exports.getAllStationsOnLine = function(line) {
-    options = {
+    const options = {
         host: 'api.tfl.gov.uk',
         path: `/Line/${line}/StopPoints?app_id=${appId}&app_key=${appKey}`
     };
 
     console.log(`Retrieving all stations on ${detflify(line)}`);
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         return module.exports.makeRequest(options).then((data) => {
-            var stations = [];
+            const stations = [];
             data.forEach((datum) => {
-                lines = [];
-                var tubeLocation;
-                for (var m = 0; m < datum.lineModeGroups.length; m++) {
+                const lines = [];
+                let tubeLocation = 0;
+                for (let m = 0; m < datum.lineModeGroups.length; m++) {
                     if (datum.lineModeGroups[m].modeName === 'tube') {
                         tubeLocation = m;
                         break;
                     }
                 }
 
-                for (var l = 0; l < datum.lineModeGroups[tubeLocation].lineIdentifier.length; l++) {
+                for (let l = 0; l < datum.lineModeGroups[tubeLocation].lineIdentifier.length; l++) {
                     lines.push(detflify(datum.lineModeGroups[tubeLocation].lineIdentifier[l]));
                 }
 
@@ -98,7 +97,7 @@ module.exports.getAllStationsOnLine = function(line) {
 };
 
 module.exports.getAllLines = function() {
-    options = {
+    const options = {
         host: 'api.tfl.gov.uk',
         path: `/Line/Mode/tube/Route?app_id=${appId}&app_key=${appKey}`
     };
@@ -106,13 +105,14 @@ module.exports.getAllLines = function() {
     console.log('Retrieving all lines');
 
     return module.exports.makeRequest(options).then((data) => {
-        var lines = [];
+        const lines = [];
         data.forEach((datum) => {
             lines.push({
                 name: datum.name,
                 id: datum.id
             });
-        })
+        });
+
         return Promise.resolve(lines);
     });
 };
@@ -120,7 +120,7 @@ module.exports.getAllLines = function() {
 module.exports.makeRequest = function(options) {
     return new Promise((resolve, reject) => {
         return https.get(options, (response) => {
-            var data = '';
+            let data = '';
 
             response.on('error', (err) => {
                 reject(err);

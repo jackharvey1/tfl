@@ -1,3 +1,5 @@
+'use strict';
+
 const tfl = require('./js/tfl');
 const mongoose = require('mongoose');
 
@@ -6,7 +8,7 @@ mongoose.connect('mongodb://localhost/tfl');
 const lineSchema = new mongoose.Schema({
     name: String,
     id: { type: String, unique: true },
-    updated_at: { type: Date, default: Date.now }
+    updatedAt: { type: Date, default: Date.now }
 });
 
 const stationSchema = new mongoose.Schema({
@@ -15,7 +17,7 @@ const stationSchema = new mongoose.Schema({
     lines: Array,
     lat: Number,
     lon: Number,
-    updated_at: { type: Date, default: Date.now }
+    updatedAt: { type: Date, default: Date.now }
 });
 
 const arrivalSchema = new mongoose.Schema({
@@ -30,12 +32,14 @@ const Station = mongoose.model('Stations', stationSchema);
 const Arrival = mongoose.model('Arrivals', arrivalSchema);
 
 function saveAllArrivalsAtAllStations(station) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         tfl.getAllArrivalsAtAllStations(station).then((arrivals) => {
             arrivals.forEach((arrival) => {
                 Arrival.count({ arrivalId: arrival.arrivalId }, (err, count) => {
-                    if (!count) {
-                        var arrivalEntry = new Arrival({
+                    if (count > 0) {
+                        console.log(`Arrival with id ${arrival.arrivalId} already exists`);
+                    } else {
+                        const arrivalEntry = new Arrival({
                             arrivalId: arrival.arrivalId,
                             vehicleId: arrival.vehicleId,
                             station: arrival.station,
@@ -49,8 +53,6 @@ function saveAllArrivalsAtAllStations(station) {
                                 console.log(`Arrival with id ${arrival.arrivalId} saved`);
                             }
                         });
-                    } else {
-                        console.log(`Arrival with id ${arrival.arrivalId} already exists`)
                     }
                 });
             });
@@ -60,12 +62,14 @@ function saveAllArrivalsAtAllStations(station) {
 }
 
 function saveAllStationsOnAllLines() {
-    return new Promise ((resolve, reject) => {
+    return new Promise((resolve) => {
         tfl.getAllStationsOnAllLines().then((stations) => {
-            stations.forEach((station, index) => {
+            stations.forEach((station) => {
                 Station.count({ naptanId: station.naptanId }, (err, count) => {
-                    if (!count) {
-                        var stationEntry = new Station({
+                    if (count > 0) {
+                        console.log(`${station.stationName} already exists`);
+                    } else {
+                        const stationEntry = new Station({
                             stationName: station.stationName,
                             naptanId: station.naptanId,
                             lines: station.lines,
@@ -80,8 +84,6 @@ function saveAllStationsOnAllLines() {
                                 console.log(`${station.stationName} saved`);
                             }
                         });
-                    } else {
-                        console.log(`${station.stationName} already exists`);
                     }
                 });
             });
@@ -91,12 +93,14 @@ function saveAllStationsOnAllLines() {
 }
 
 function saveAllLines() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         tfl.getAllLines().then((lines) => {
             lines.forEach((line) => {
                 Line.count({ id: line.id }, (err, count) => {
-                    if (!count) {
-                        var lineEntry = new Line({
+                    if (count > 0) {
+                        console.log(`${line.name} already exists`);
+                    } else {
+                        const lineEntry = new Line({
                             name: line.name,
                             id: line.id
                         });
@@ -108,8 +112,6 @@ function saveAllLines() {
                                 console.log(`${line.name} saved`);
                             }
                         });
-                    } else {
-                        console.log(`${line.name} already exists`)
                     }
                 });
             });
@@ -135,7 +137,7 @@ function retrieveAllStationsOnAllLines() {
             if (err) {
                 return reject(err);
             }
-            resolve(stations)
+            resolve(stations);
         });
     });
 }
@@ -146,7 +148,7 @@ function retrieveAllStationsOnLine(line) {
             if (err) {
                 return reject(err);
             }
-            resolve(stations)
+            resolve(stations);
         });
     });
 }

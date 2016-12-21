@@ -1,5 +1,5 @@
 /* global sandbox, expect */
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 describe('Database', function() {
     describe('when getting stations', function() {
