@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "api.js",
   "dependencies": {
+    "console-stamp": "^0.2.4",
     "dustjs-linkedin": "^2.7.5",
     "express": "^4.14.0",
     "lodash": "^4.17.2",

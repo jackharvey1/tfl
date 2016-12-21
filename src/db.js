@@ -1,52 +1,90 @@
-var tfl = require('./js/tfl');
-var mongoose = require('mongoose');
+const tfl = require('./js/tfl');
+const mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/tfl');
 
-var lineSchema = new mongoose.Schema({
+const lineSchema = new mongoose.Schema({
     name: String,
-    id: String,
+    id: { type: String, unique: true },
     updated_at: { type: Date, default: Date.now }
 });
 
-var stationSchema = new mongoose.Schema({
-    station: String,
-    naptanId: String,
+const stationSchema = new mongoose.Schema({
+    stationName: String,
+    naptanId: { type: String, unique: true },
     lines: Array,
     lat: Number,
     lon: Number,
     updated_at: { type: Date, default: Date.now }
 });
 
-var arrivalSchema = new mongoose.Schema({
+const arrivalSchema = new mongoose.Schema({
+    arrivalId: { type: String, unique: true },
     station: String,
     vehicleId: Number,
     expectedArrival: Date
 });
 
-var Line = mongoose.model('Line', lineSchema);
-var Station = mongoose.model('Station', stationSchema);
-var Arrivals = mongoose.model('Arrivals', arrivalSchema);
+const Line = mongoose.model('Lines', lineSchema);
+const Station = mongoose.model('Stations', stationSchema);
+const Arrival = mongoose.model('Arrivals', arrivalSchema);
 
-function saveAllArrivalsAt(station) {
+function saveAllArrivalsAtAllStations(station) {
     return new Promise((resolve, reject) => {
-        tfl.getAllArrivalsAt(station).then((arrivals) => {
-            for (var a = 0; a < arrivals.length; a++) {
-                if (Arrivals.where({ 'arrivalId': arrival[a].arrivalId }).count() < 1) {
-                    var arrival = new Arrival({
-                        arrivalId: data[i].id,
-                        vehicleId: data[i].vehicleId,
-                        station: data[i].stationName,
-                        expectedArrival: data[i].expectedArrival
-                    });
+        tfl.getAllArrivalsAtAllStations(station).then((arrivals) => {
+            arrivals.forEach((arrival) => {
+                Arrival.count({ arrivalId: arrival.arrivalId }, (err, count) => {
+                    if (!count) {
+                        var arrivalEntry = new Arrival({
+                            arrivalId: arrival.arrivalId,
+                            vehicleId: arrival.vehicleId,
+                            station: arrival.station,
+                            expectedArrival: arrival.expectedArrival
+                        });
 
-                    arrival.save((err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    });
-                }
-            }
+                        arrivalEntry.save((err) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(`Arrival with id ${arrival.arrivalId} saved`);
+                            }
+                        });
+                    } else {
+                        console.log(`Arrival with id ${arrival.arrivalId} already exists`)
+                    }
+                });
+            });
+            resolve();
+        });
+    });
+}
+
+function saveAllStationsOnAllLines() {
+    return new Promise ((resolve, reject) => {
+        tfl.getAllStationsOnAllLines().then((stations) => {
+            stations.forEach((station, index) => {
+                Station.count({ naptanId: station.naptanId }, (err, count) => {
+                    if (!count) {
+                        var stationEntry = new Station({
+                            stationName: station.stationName,
+                            naptanId: station.naptanId,
+                            lines: station.lines,
+                            lat: station.lat,
+                            lon: station.lon
+                        });
+
+                        stationEntry.save((err) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(`${station.stationName} saved`);
+                            }
+                        });
+                    } else {
+                        console.log(`${station.stationName} already exists`);
+                    }
+                });
+            });
             resolve();
         });
     });
@@ -55,57 +93,49 @@ function saveAllArrivalsAt(station) {
 function saveAllLines() {
     return new Promise((resolve, reject) => {
         tfl.getAllLines().then((lines) => {
-            Line.remove({}, () => {
-                for (var l = 0; l < lines.length; l++) {
-                    var line = new Line({
-                        name: lines[l].name,
-                        id: lines[l].id
-                    });
+            lines.forEach((line) => {
+                Line.count({ id: line.id }, (err, count) => {
+                    if (!count) {
+                        var lineEntry = new Line({
+                            name: line.name,
+                            id: line.id
+                        });
 
-                    line.save((err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    });
-                }
-                resolve();
+                        lineEntry.save((err) => {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                console.log(`${line.name} saved`);
+                            }
+                        });
+                    } else {
+                        console.log(`${line.name} already exists`)
+                    }
+                });
             });
-        });
-    });
-}
-
-function saveAllStationsOnAllLines() {
-    return new Promise ((resolve, reject) => {
-        tfl.getAllStationsOnAllLines().then((stations) => {
-            Station.remove({}, () => {
-                for (var s = 0; s < stations.length; s++) {
-                    var station = new Station({
-                        station: stations[s].station,
-                        naptanId: stations[s].naptanId,
-                        lines: stations[s].lines,
-                        lat: stations[s].lat,
-                        lon: stations[s].lon
-                    });
-
-                    station.save((err) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                    });
-                }
-                resolve();
-            });
+            resolve();
         });
     });
 }
 
 function retrieveAllLines() {
     return new Promise((resolve, reject) => {
-        Line.find((err, lines) => {
+        Line.find({}, (err, lines) => {
             if (err) {
                 return reject(err);
             }
             resolve(lines);
+        });
+    });
+}
+
+function retrieveAllStationsOnAllLines() {
+    return new Promise((resolve, reject) => {
+        Station.find({}, (err, stations) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(stations)
         });
     });
 }
@@ -119,24 +149,23 @@ function retrieveAllStationsOnLine(line) {
             resolve(stations)
         });
     });
-
 }
 
-function retrieveAllStationsOnAllLines() {
-    return new Promise((resolve, reject) => {
-        Station.find((err, stations) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(stations)
-        });
+function clearDatabase() {
+    return Promise.all([
+        Line.remove({}),
+        Station.remove({}),
+        Arrival.remove({})
+    ]).then(() => {
+        console.log('Database cleared');
     });
 }
 
 module.exports = {
-    saveAllArrivalsAt,
-    saveAllLines,
+    clearDatabase,
+    saveAllArrivalsAtAllStations,
     saveAllStationsOnAllLines,
+    saveAllLines,
     retrieveAllLines,
     retrieveAllStationsOnLine,
     retrieveAllStationsOnAllLines

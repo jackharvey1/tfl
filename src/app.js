@@ -1,20 +1,18 @@
-var dust = require('dustjs-linkedin');
-var express = require('express')
-var fs = require('fs');
+const express = require('express')
+require('console-stamp')(console, 'HH:MM:ss.l');
+const dust = require('dustjs-linkedin');
+const morgan = require('morgan');
+const fs = require('fs');
 
-var tfl = require('./js/tfl');
-var db = require('./db');
+const tfl = require('./js/tfl');
+const db = require('./db');
 
-var app = express();
-
-/*
-    USE LAT-LONG from /Line/$line/StopPoints endpoint to draw map
-*/
-
+const app = express();
+app.use(morgan('combined'))
 
 app.get('/', (req, res) => {
     fs.readFile('pages/test.dust', "utf8", (err, data) => {
-        var compiled = dust.compile(data, "test");
+        const compiled = dust.compile(data, "test");
 
         dust.loadSource(compiled);
 
@@ -56,7 +54,7 @@ app.listen(3000, () => {
     console.log('Listening on port 3000');
     db.saveAllLines().then(() => {
         db.saveAllStationsOnAllLines().then(() => {
-            tfl.getAllArrivalsAt('940GZZLUMSH');
+            db.saveAllArrivalsAtAllStations();
         });
     });
 });

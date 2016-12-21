@@ -1,4 +1,4 @@
-/* global sandbox, expect*/
+/* global sandbox, expect */
 var mongoose = require('mongoose');
 var tfl = require('../../src/js/tfl');
 var config = require('../../config/config.js');
@@ -6,21 +6,19 @@ var db = require('../../src/db');
 
 var lines = require('../resources/lines.json');
 var stationsOnVictoria = require('../resources/stations-on-victoria.json');
-var arrivalsAt940X = require('../resources/arrivals-at-940X.json')
+var arrivalsAt940X = require('../resources/arrivals-at-940X.json');
 
 describe('TfL calls', function() {
+    afterEach(function() {
+        sandbox.restore();
+    });
+
     describe('for lines', function() {
-        beforeEach(function() {
-            sinon.stub(tfl, 'makeRequest', function() {
+        it('should make the call correctly', function() {
+            sandbox.stub(tfl, 'makeRequest', function() {
                 return Promise.resolve(lines);
             });
-        });
 
-        afterEach(function() {
-            tfl.makeRequest.restore();
-        });
-
-        it('should make the call correctly', function() {
             return tfl.getAllLines().then((lines) => {
                 return expect(lines).to.deep.equal([
                     {
@@ -38,11 +36,7 @@ describe('TfL calls', function() {
         });
     });
 
-    describe('for stations on one line', function() {
-        afterEach(function() {
-            tfl.makeRequest.restore();
-        });
-
+    describe('for stations', function() {
         it('should make the call for one station correctly', function() {
             sandbox.stub(tfl, 'makeRequest', function() {
                 return Promise.resolve(stationsOnVictoria);
@@ -51,19 +45,19 @@ describe('TfL calls', function() {
             return tfl.getAllStationsOnLine('victoria').then((stations) => {
                 return expect(stations).to.deep.equal([
                     {
-                        station: 'Blackhorse Road Underground Station',
+                        stationName: 'Blackhorse Road Underground Station',
                         naptanId: '940GZZLUBLR',
                         lines: [ 'Victoria' ],
                         lat: 51.586919,
                         lon: -0.04115
                     }, {
-                        station: 'Brixton Underground Station',
+                        stationName: 'Brixton Underground Station',
                         naptanId: '940GZZLUBXN',
                         lines: [ 'Victoria' ],
                         lat: 51.462618,
                         lon: -0.114888
                     }, {
-                        station: 'Euston Underground Station',
+                        stationName: 'Euston Underground Station',
                         naptanId: '940GZZLUEUS',
                         lines: [ 'Northern', 'Victoria' ],
                         lat: 51.528055,
@@ -72,22 +66,18 @@ describe('TfL calls', function() {
                 ]);
             });
         });
-    });
-
-    describe('calls for stations on all lines', function () {
-        afterEach(function() {
-            db.retrieveAllLines.restore();
-            tfl.getAllStationsOnLine.restore();
-        });
 
         it('should make the call for all stations correctly', function() {
             sandbox.stub(db, 'retrieveAllLines', function() {
                 return Promise.resolve([
                     {
+                        name: 'Victoria',
                         id: 'victoria'
                     }, {
+                        name: 'Hammersmith & City',
                         id: 'hammersmith-city'
                     }, {
+                        name: 'Jubilee',
                         id: 'jubilee'
                     }
                 ]);
@@ -95,7 +85,7 @@ describe('TfL calls', function() {
 
             sandbox.stub(tfl, 'getAllStationsOnLine', function(line) {
                 return Promise.resolve({
-                    station: `station on ${line}`,
+                    stationName: `station on ${line}`,
                     naptanId: `station on ${line} id`,
                     lines: ['some', 'test', 'lines'],
                     lat: 50,
@@ -104,21 +94,21 @@ describe('TfL calls', function() {
             });
 
             return tfl.getAllStationsOnAllLines().then((stations) => {
-                expect(stations).to.deep.equal([
+                return expect(stations).to.deep.equal([
                     {
-                        station: `station on victoria`,
+                        stationName: `station on victoria`,
                         naptanId: `station on victoria id`,
                         lines: ['some', 'test', 'lines'],
                         lat: 50,
                         lon: 0
                     },{
-                        station: `station on hammersmith-city`,
+                        stationName: `station on hammersmith-city`,
                         naptanId: `station on hammersmith-city id`,
                         lines: ['some', 'test', 'lines'],
                         lat: 50,
                         lon: 0
                     },{
-                        station: `station on jubilee`,
+                        stationName: `station on jubilee`,
                         naptanId: `station on jubilee id`,
                         lines: ['some', 'test', 'lines'],
                         lat: 50,
@@ -130,36 +120,90 @@ describe('TfL calls', function() {
     });
 
     describe('for arrivals', function() {
-        beforeEach(function() {
-            sinon.stub(tfl, 'makeRequest', function() {
+        afterEach(function() {
+            sandbox.restore();
+        });
+
+        it('should make the call for arrivals at one station correctly', function() {
+            sandbox.stub(tfl, 'makeRequest', function() {
                 return Promise.resolve(arrivalsAt940X);
+            });
+
+            return tfl.getAllArrivalsAt('940X').then((stations) => {
+                return expect(stations).to.deep.equal([
+                    {
+                        arrivalId: '352100931',
+                        expectedArrival: '2016-12-17T18:36:52.7022069Z',
+                        stationName: 'Oxford Circus Underground Station',
+                        vehicleId: '203'
+                    }, {
+                        arrivalId: '1015497106',
+                        expectedArrival: '2016-12-17T18:35:52.7022069Z',
+                        stationName: 'Oxford Circus Underground Station',
+                        vehicleId: '210'
+                    }, {
+                        arrivalId: '2002081508',
+                        expectedArrival: '2016-12-17T18:42:51.7332069Z',
+                        stationName: 'Oxford Circus Underground Station',
+                        vehicleId: '222'
+                    }
+                ]);
             });
         });
 
-        afterEach(function() {
-            tfl.makeRequest.restore();
-        });
-
-        it('should make the call for all arrivals at one station correctly', function() {
-            return tfl.getAllArrivalsAt('940X').then((stations) => {
-                expect(stations).to.deep.equal([
+        it('should make the call for arrivals at all stations correctly', function() {
+            sandbox.stub(db, 'retrieveAllStationsOnAllLines', function() {
+                return Promise.resolve([
                     {
-                        'arrivalId': '352100931',
-                        'expectedArrival': '2016-12-17T18:36:52.7022069Z',
-                        'station': 'Oxford Circus Underground Station',
-                        'vehicleId': '203'
-                    }, {
-                        'arrivalId': '1015497106',
-                        'expectedArrival': '2016-12-17T18:35:52.7022069Z',
-                        'station': 'Oxford Circus Underground Station',
-                        'vehicleId': '210'
-                    }, {
-                        'arrivalId': '2002081508',
-                        'expectedArrival': '2016-12-17T18:42:51.7332069Z',
-                        'station': 'Oxford Circus Underground Station',
-                        'vehicleId': '222'
+                        stationName: `King's Cross`,
+                        naptanId: `940XKGX`,
+                        lines: [ 'Metropolitan', 'Victoria', 'Northern' ],
+                        lat: 50,
+                        lon: 0
+                    },{
+                        stationName: `Bank`,
+                        naptanId: `940XVIC`,
+                        lines: [ 'Northern', 'Central' ],
+                        lat: 50,
+                        lon: 0
+                    },{
+                        stationName: `Highbury & Islington`,
+                        naptanId: `940XISL`,
+                        lines: [ 'Victoria' ],
+                        lat: 50,
+                        lon: 0
                     }
                 ]);
+            });
+
+            sandbox.stub(tfl, 'getAllArrivalsAt', function(stationName) {
+                return Promise.resolve({
+                    arrivalId: `arrival at ${stationName}`,
+                    vehicleId: `vehicleId`,
+                    stationName: `${stationName}`,
+                    expectedArrival: `1970-01-01T12.00.00.00000`
+                });
+            });
+
+            return tfl.getAllArrivalsAtAllStations().then((stations) => {
+                expect(stations).to.deep.equal([
+                    {
+                        arrivalId: `arrival at King's Cross`,
+                        vehicleId: `vehicleId`,
+                        stationName: `King's Cross`,
+                        expectedArrival: `1970-01-01T12.00.00.00000`
+                    },{
+                        arrivalId: `arrival at Bank`,
+                        vehicleId: `vehicleId`,
+                        stationName: `Bank`,
+                        expectedArrival: `1970-01-01T12.00.00.00000`
+                    },{
+                        arrivalId: `arrival at Highbury & Islington`,
+                        vehicleId: `vehicleId`,
+                        stationName: `Highbury & Islington`,
+                        expectedArrival: `1970-01-01T12.00.00.00000`
+                    }
+                ])
             });
         });
     });
