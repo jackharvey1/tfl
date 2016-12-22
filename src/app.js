@@ -4,6 +4,7 @@ const express = require('express');
 require('console-stamp')(console, 'HH:MM:ss.l');
 const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
+const CronJob = require('cron').CronJob;
 const fs = require('fs');
 
 const tfl = require('./js/tfl');
@@ -54,9 +55,16 @@ app.get('arrivals/:station', (req, res) => {
 
 app.listen(3000, () => {
     console.log('Listening on port 3000');
+
     db.saveAllLines().then(() => {
         db.saveAllStationsOnAllLines().then(() => {
-            db.saveAllArrivalsAtAllStations();
+            new CronJob('* * * * *', function() {
+                db.cleanArrivals();
+            }, null, true);
+
+            new CronJob('* * * * *', function() {
+                db.saveAllArrivalsAtAllStations();
+            }, null, true);
         });
     });
 });

@@ -2,6 +2,7 @@
 
 const https = require('https');
 const flatten = require('lodash/flattenDeep');
+const removeDuplicatesBy = require('lodash/uniqBy');
 const db = require('./../db');
 const config = require('./../../config/config');
 const detflify = require('./helpers').detflify;
@@ -11,12 +12,14 @@ const appKey = config.app.key;
 
 module.exports.getAllArrivalsAtAllStations = function() {
     return db.retrieveAllStationsOnAllLines().then((stations) => {
+        console.info(`Getting all arrivals at all stations`);
+
         return Promise.all(
             stations.map((station) => {
                 return station.naptanId;
             }).map(module.exports.getAllArrivalsAt)
         ).then((arrivals) => {
-            return flatten(arrivals);
+            return removeDuplicatesBy(flatten(arrivals), 'arrivalId');
         });
     });
 };
@@ -26,8 +29,6 @@ module.exports.getAllArrivalsAt = function(stationNaptanId) {
         host: 'api.tfl.gov.uk',
         path: `/StopPoint/${stationNaptanId}/Arrivals?app_id=${appId}&app_key=${appKey}`
     };
-
-    console.log(`Getting all arrivals at ${stationNaptanId}`);
 
     return new Promise((resolve) => {
         return module.exports.makeRequest(options).then((data) => {
@@ -48,12 +49,14 @@ module.exports.getAllArrivalsAt = function(stationNaptanId) {
 
 module.exports.getAllStationsOnAllLines = function() {
     return db.retrieveAllLines().then((lines) => {
+        console.info(`Retrieving all stations on all lines`);
+
         return Promise.all(
             lines.map((line) => {
                 return line.id;
             }).map(module.exports.getAllStationsOnLine)
         ).then((stations) => {
-            return flatten(stations);
+            return removeDuplicatesBy(flatten(stations), 'naptanId');
         });
     });
 };
@@ -64,13 +67,11 @@ module.exports.getAllStationsOnLine = function(line) {
         path: `/Line/${line}/StopPoints?app_id=${appId}&app_key=${appKey}`
     };
 
-    console.log(`Retrieving all stations on ${detflify(line)}`);
-
     return new Promise((resolve) => {
         return module.exports.makeRequest(options).then((data) => {
             const stations = [];
             data.forEach((datum) => {
-                const lines = [];
+                const linesAtStation = [];
                 let tubeLocation = 0;
                 for (let m = 0; m < datum.lineModeGroups.length; m++) {
                     if (datum.lineModeGroups[m].modeName === 'tube') {
@@ -80,13 +81,13 @@ module.exports.getAllStationsOnLine = function(line) {
                 }
 
                 for (let l = 0; l < datum.lineModeGroups[tubeLocation].lineIdentifier.length; l++) {
-                    lines.push(detflify(datum.lineModeGroups[tubeLocation].lineIdentifier[l]));
+                    linesAtStation.push(detflify(datum.lineModeGroups[tubeLocation].lineIdentifier[l]));
                 }
 
                 stations.push({
                     stationName: datum.commonName,
                     naptanId: datum.naptanId,
-                    lines: lines,
+                    lines: linesAtStation,
                     lat: datum.lat,
                     lon: datum.lon
                 });
@@ -102,7 +103,7 @@ module.exports.getAllLines = function() {
         path: `/Line/Mode/tube/Route?app_id=${appId}&app_key=${appKey}`
     };
 
-    console.log('Retrieving all lines');
+    console.info('Retrieving all lines');
 
     return module.exports.makeRequest(options).then((data) => {
         const lines = [];
