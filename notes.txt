@@ -1,10 +1,7 @@
 # TODO
 
-Make a note of when the arrivals have been saved until somewhere
-Do not create duplicate arrivals
-Do not create duplicate stations
-
 # PROBLEMS
+Why does the amount of entries shown in robomongo not match the saved + already saved output?
 Is having to have the db running for tests to pass bad? If so, how do I mock it out? Fails on `mongoose.connect`.
 Stations are being saved twice as multiple lines have one station
 `module.exports`, e.g. `module.exports.makeRequest` is needed for tests. Is there a way to not do this?

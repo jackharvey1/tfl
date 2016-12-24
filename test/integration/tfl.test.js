@@ -1,6 +1,6 @@
 /* global sandbox, expect */
 const tfl = require('../../src/js/tfl');
-const db = require('../../src/db');
+const db = require('../../src/db/db');
 
 const lines = require('../resources/lines.json');
 const stationsOnVictoria = require('../resources/stations-on-victoria.json');

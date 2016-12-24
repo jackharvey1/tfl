@@ -1,41 +1,19 @@
 'use strict';
 
-const tfl = require('./js/tfl');
+const tfl = require('../js/tfl');
+const models = require('./models');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const flatten = require('lodash/flattenDeep');
 
+const Line = models.Line;
+const Station = models.Station;
+const Arrival = models.Arrival;
+
 mongoose.connect('mongodb://localhost/tfl');
-
-const lineSchema = new mongoose.Schema({
-    name: String,
-    id: { type: String, unique: true },
-    updatedAt: { type: Date, default: Date.now }
-});
-
-const stationSchema = new mongoose.Schema({
-    stationName: String,
-    naptanId: { type: String, unique: true },
-    lines: Array,
-    lat: Number,
-    lon: Number,
-    updatedAt: { type: Date, default: Date.now }
-});
-
-const arrivalSchema = new mongoose.Schema({
-    arrivalId: { type: String, unique: true },
-    station: String,
-    vehicleId: Number,
-    expectedArrival: Date
-});
-
-const Line = mongoose.model('Lines', lineSchema);
-const Station = mongoose.model('Stations', stationSchema);
-const Arrival = mongoose.model('Arrivals', arrivalSchema);
 
 function saveAllArrivalsAtAllStations(station) {
     return tfl.getAllArrivalsAtAllStations(station).then((arrivals) => {
-        console.log(`length: ${arrivals.length}`)
         return Promise.all(
             arrivals.map((arrival) => {
                 return new Promise((resolve) => {
@@ -166,17 +144,6 @@ function cleanArrivals() {
     });
 }
 
-function retrieveAllLines() {
-    return new Promise((resolve, reject) => {
-        Line.find({}, (err, lines) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(lines);
-        });
-    });
-}
-
 function retrieveAllStationsOnAllLines() {
     return new Promise((resolve, reject) => {
         Station.find({}, (err, stations) => {
@@ -199,11 +166,34 @@ function retrieveAllStationsOnLine(line) {
     });
 }
 
+function retrieveAllLines() {
+    return new Promise((resolve, reject) => {
+        Line.find({}, (err, lines) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(lines);
+        });
+    });
+}
+
 function clearDatabase() {
     return Promise.all([
-        Line.remove({}),
-        Station.remove({}),
-        Arrival.remove({})
+        Line.remove({}, () => {
+            return new Promise((resolve) => {
+                resolve();
+            });
+        }),
+        Station.remove({}, () => {
+            return new Promise((resolve) => {
+                resolve();
+            });
+        }),
+        Arrival.remove({}, () => {
+            return new Promise((resolve) => {
+                resolve();
+            });
+        })
     ]).then(() => {
         console.log('Database cleared');
     });
