@@ -92,7 +92,10 @@ module.exports.getAllStationsOnLine = function(line) {
                     lon: datum.lon
                 });
             });
-            resolve(stations);
+
+            module.exports.getConsecutiveStations(stations).then((linkedStations) => {
+                resolve(linkedStations);
+            });
         });
     });
 };

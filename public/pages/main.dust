@@ -1,14 +1,13 @@
 <html>
-<head>
-    <script src="/js/utils.js"></script>
-    <link rel="stylesheet" href="/styles/main.css" />
-</head>
-<body>
-    {#stations}
-        <div class="station" style="top:{top}px;left:{left}px">
-            <i class="point" onmouseenter="showTooltip(this)" onmouseleave="hideTooltip(this)"></i>
-            <p class="tooltip hidden">{stationName}</p>
-        </div>
-    {/stations}
-</body>
+    <head>
+        <link rel="icon" href="/img/favicon.ico" />
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="/styles/main.css" />
+        <script src="/js/main.js"></script>
+    </head>
+    <body onload="init()">
+        <div id="map"></div>
+    </body>
 </html>

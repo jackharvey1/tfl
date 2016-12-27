@@ -43,19 +43,19 @@ describe('TfL calls', function() {
             return tfl.getAllStationsOnLine('victoria').then((stations) => {
                 return expect(stations).to.deep.equal([
                     {
-                        stationName: 'Blackhorse Road Underground Station',
+                        stationName: 'Blackhorse Road',
                         naptanId: '940GZZLUBLR',
                         lines: ['Victoria'],
                         lat: 51.586919,
                         lon: -0.04115
                     }, {
-                        stationName: 'Brixton Underground Station',
+                        stationName: 'Brixton',
                         naptanId: '940GZZLUBXN',
                         lines: ['Victoria'],
                         lat: 51.462618,
                         lon: -0.114888
                     }, {
-                        stationName: 'Euston Underground Station',
+                        stationName: 'Euston',
                         naptanId: '940GZZLUEUS',
                         lines: ['Northern', 'Victoria'],
                         lat: 51.528055,
@@ -132,17 +132,17 @@ describe('TfL calls', function() {
                     {
                         arrivalId: '352100931',
                         expectedArrival: '2016-12-17T18:36:52.7022069Z',
-                        stationName: 'Oxford Circus Underground Station',
+                        stationName: 'Oxford Circus',
                         vehicleId: '203'
                     }, {
                         arrivalId: '1015497106',
                         expectedArrival: '2016-12-17T18:35:52.7022069Z',
-                        stationName: 'Oxford Circus Underground Station',
+                        stationName: 'Oxford Circus',
                         vehicleId: '210'
                     }, {
                         arrivalId: '2002081508',
                         expectedArrival: '2016-12-17T18:42:51.7332069Z',
-                        stationName: 'Oxford Circus Underground Station',
+                        stationName: 'Oxford Circus',
                         vehicleId: '222'
                     }
                 ]);

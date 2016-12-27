@@ -10,7 +10,6 @@ const CronJob = require('cron').CronJob;
 const path = require('path');
 const fs = require('fs');
 
-const tfl = require('./src/js/tfl');
 const db = require('./src/db/db');
 const merge = require('./src/helpers/utils').mergeObjectArray;
 const max = require('./src/helpers/db').max;
@@ -24,41 +23,55 @@ const app = express();
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/list', (req, res) => {
+    fs.readFile(path.join(__dirname, 'public/pages/list.dust'), "utf8", (err, template) => {
+        const compiled = dust.compile(template, "list");
+        dust.loadSource(compiled);
+
+        db.retrieveAllStationsOnAllLines().then((stations) => {
+            dust.render("list", {stations}, function(err, html) {
+                res.send(html);
+            });
+        });
+    });
+});
+
 app.get('/', (req, res) => {
     fs.readFile(path.join(__dirname, 'public/pages/main.dust'), "utf8", (err, template) => {
-        Promise.all([
-            max(Station, 'lat'),
-            min(Station, 'lat'),
-            max(Station, 'lon'),
-            min(Station, 'lon')
-        ]).then((obj) => {
-            const compiled = dust.compile(template, "main");
-            const minimaxes = merge(obj);
-            dust.loadSource(compiled);
+        const compiled = dust.compile(template, "leaflet");
+        dust.loadSource(compiled);
 
-            forEach(minimaxes, (m) => {
-                assign(m, { diff: Math.round((m.max - m.min) * 100) / 100 });
-            });
+        dust.render("leaflet", {}, function(err, html) {
+            res.send(html);
+        });
+    });
+});
 
-            db.retrieveAllStationsOnAllLines().then((stations) => {
-                return new Promise((resolve) => {
-                    forEach(stations, (station) => {
-                        station.top = Math.round((minimaxes.lat.max - station.lat) * 1000) / 1000;
-                        station.left = Math.round((station.lon - minimaxes.lon.min) * 1000) / 1000;
-                        station.top *= 2500;
-                        station.left *= 2500;
-                        delete station._id;
-                        delete station.naptanId;
-                        delete station.__v;
-                        delete station.updatedAt;
-                    });
-                    resolve(stations);
+app.get('/mapData', (req, res) => {
+    Promise.all([
+        max(Station, 'lat'),
+        min(Station, 'lat'),
+        max(Station, 'lon'),
+        min(Station, 'lon')
+    ]).then((obj) => {
+        const minimaxes = merge(obj);
+
+        forEach(minimaxes, (m) => {
+            assign(m, { diff: Math.round((m.max - m.min) * 100) / 100 });
+        });
+
+        db.retrieveAllStationsOnAllLines().then((stations) => {
+            return new Promise((resolve) => {
+                forEach(stations, (station) => {
+                    delete station._id;
+                    delete station.naptanId;
+                    delete station.__v;
+                    delete station.updatedAt;
                 });
-            }).then((stations) => {
-                dust.render("main", {stations, minimaxes}, function(err, html) {
-                    res.send(html);
-                });
+                resolve(stations);
             });
+        }).then((stations) => {
+            res.send({stations, minimaxes});
         });
     });
 });
@@ -66,27 +79,6 @@ app.get('/', (req, res) => {
 app.get('/lines', (req, res) => {
     db.retrieveAllLines().then((lines) => {
         res.json(lines);
-        res.end();
-    });
-});
-
-app.get('/stations/:line', (req, res) => {
-    if (req.params.line === 'all') {
-        db.retrieveAllStationsOnAllLines().then((stations) => {
-            res.json(stations);
-            res.end();
-        });
-    } else {
-        db.retrieveAllStationsOnLine(req.params.line).then((stations) => {
-            res.json(stations);
-            res.end();
-        });
-    }
-});
-
-app.get('arrivals/:station', (req, res) => {
-    tfl.getArrivalsAt(req.params.station).then((arrivals) => {
-        res.json(arrivals);
         res.end();
     });
 });

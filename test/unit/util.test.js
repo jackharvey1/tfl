@@ -2,7 +2,7 @@
 
 'use strict';
 
-const util = require('../../src/helpers/util');
+const util = require('../../src/helpers/utils');
 
 describe('Helper functions', function() {
     describe('of type utility', function() {
