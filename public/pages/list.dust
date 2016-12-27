@@ -1,0 +1,15 @@
+<html>
+<head>
+    <script src="/js/utils.js"></script>
+    <link rel="stylesheet" href="/styles/list.css" />
+</head>
+<body>
+    <div class="station-list">
+        {#stations}
+            <div class="station">
+                <p class="station-name">{stationName}</p>
+            </div>
+        {/stations}
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+.station-list:first-child {
+    border-bottom: 1px solid;
+}
+
+.station {
+    height: 30px;
+    width: 200px;
+    border: 1px solid;
+    border-bottom: 0;
+}
+
+.station-name {
+    font-size: 18px;
+    font-family: sans-serif;
+    margin: 5px;
+}
