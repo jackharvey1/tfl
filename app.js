@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 
 const db = require('./src/db/db');
+const tfl = require('./src/js/tfl');
 const merge = require('./src/helpers/utils').mergeObjectArray;
 const max = require('./src/helpers/db').max;
 const min = require('./src/helpers/db').min;
@@ -22,6 +23,44 @@ const app = express();
 
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    fs.readFile(path.join(__dirname, 'public/pages/main.dust'), "utf8", (err, template) => {
+        const compiled = dust.compile(template, "main");
+        dust.loadSource(compiled);
+
+        dust.render("main", {}, function(err, html) {
+            res.send(html);
+        });
+    });
+});
+
+app.get('/stationStats', (req, res) => {
+    Promise.all([
+        max(Station, 'lat'),
+        min(Station, 'lat'),
+        max(Station, 'lon'),
+        min(Station, 'lon')
+    ]).then((obj) => {
+        const minimaxes = merge(obj);
+
+        forEach(minimaxes, (m) => {
+            assign(m, { diff: Math.round((m.max - m.min) * 100) / 100 });
+        });
+
+        res.send(minimaxes);
+    });
+});
+
+app.get('/lineData', (req, res) => {
+    let lines = [];
+    db.retrieveAllLines().then((dbLines) => {
+        lines = dbLines;
+        db.retrieveAllRoutesOnAllLines();
+    }).then((routes) => {
+        res.send({lines, routes});
+    });
+});
 
 app.get('/list', (req, res) => {
     fs.readFile(path.join(__dirname, 'public/pages/list.dust'), "utf8", (err, template) => {
@@ -36,49 +75,30 @@ app.get('/list', (req, res) => {
     });
 });
 
-app.get('/', (req, res) => {
-    fs.readFile(path.join(__dirname, 'public/pages/main.dust'), "utf8", (err, template) => {
-        const compiled = dust.compile(template, "leaflet");
-        dust.loadSource(compiled);
-
-        dust.render("leaflet", {}, function(err, html) {
-            res.send(html);
-        });
-    });
-});
-
-app.get('/mapData', (req, res) => {
-    Promise.all([
-        max(Station, 'lat'),
-        min(Station, 'lat'),
-        max(Station, 'lon'),
-        min(Station, 'lon')
-    ]).then((obj) => {
-        const minimaxes = merge(obj);
-
-        forEach(minimaxes, (m) => {
-            assign(m, { diff: Math.round((m.max - m.min) * 100) / 100 });
-        });
-
+app.get('/stations/:line', (req, res) => {
+    if (req.params.line === 'all') {
         db.retrieveAllStationsOnAllLines().then((stations) => {
-            return new Promise((resolve) => {
-                forEach(stations, (station) => {
-                    delete station._id;
-                    delete station.naptanId;
-                    delete station.__v;
-                    delete station.updatedAt;
-                });
-                resolve(stations);
-            });
-        }).then((stations) => {
-            res.send({stations, minimaxes});
+            res.json(stations);
+            res.end();
         });
-    });
+    } else {
+        db.retrieveAllStationsOnLine(req.params.line).then((stations) => {
+            res.json(stations);
+            res.end();
+        });
+    }
 });
 
 app.get('/lines', (req, res) => {
     db.retrieveAllLines().then((lines) => {
         res.json(lines);
+        res.end();
+    });
+});
+
+app.get('/routes', (req, res) => {
+    db.retrieveAllRoutesOnAllLines().then((routes) => {
+        res.json(routes);
         res.end();
     });
 });
@@ -89,7 +109,9 @@ app.listen(3000, () => {
         db.clearDatabase();
     } else if (process.env.NODE_ENV === 'quiet') {
         db.saveAllLines().then(() => {
-            db.saveAllStationsOnAllLines();
+            db.saveAllStationsOnAllLines().then(() => {
+                db.saveAllRoutesOnAllLines();
+            });
         });
     } else if (!process.env.NODE_ENV || process.env.NODE_ENV === 'live') {
         db.saveAllLines().then(() => {

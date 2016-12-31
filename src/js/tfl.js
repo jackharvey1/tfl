@@ -3,7 +3,7 @@
 const https = require('https');
 const flatten = require('lodash/flattenDeep');
 const removeDuplicatesBy = require('lodash/uniqBy');
-const db = require('./../db/db');
+const db = require('../db/db');
 const config = require('./../../config/config');
 const detflify = require('../helpers/utils').detflify;
 
@@ -16,7 +16,7 @@ module.exports.getAllArrivalsAtAllStations = function() {
 
         return Promise.all(
             stations.map((station) => {
-                return station.naptanId;
+                return station.stationId;
             }).map(module.exports.getAllArrivalsAt)
         ).then((arrivals) => {
             return removeDuplicatesBy(flatten(arrivals), 'arrivalId');
@@ -24,10 +24,10 @@ module.exports.getAllArrivalsAtAllStations = function() {
     });
 };
 
-module.exports.getAllArrivalsAt = function(stationNaptanId) {
+module.exports.getAllArrivalsAt = function(stationId) {
     const options = {
         host: 'api.tfl.gov.uk',
-        path: `/StopPoint/${stationNaptanId}/Arrivals?app_id=${appId}&app_key=${appKey}`
+        path: `/StopPoint/${stationId}/Arrivals?app_id=${appId}&app_key=${appKey}`
     };
 
     return new Promise((resolve) => {
@@ -50,16 +50,16 @@ module.exports.getAllArrivalsAt = function(stationNaptanId) {
 module.exports.getAllStationsOnAllLines = function() {
     return db.retrieveAllLines().then((lines) => {
         console.info(`Retrieving all stations on all lines`);
-
         return Promise.all(
             lines.map((line) => {
                 return line.id;
             }).map(module.exports.getAllStationsOnLine)
         ).then((stations) => {
-            return removeDuplicatesBy(flatten(stations), 'naptanId');
+            return removeDuplicatesBy(flatten(stations), 'stationId');
         });
     });
 };
+
 
 module.exports.getAllStationsOnLine = function(line) {
     const options = {
@@ -86,16 +86,51 @@ module.exports.getAllStationsOnLine = function(line) {
 
                 stations.push({
                     stationName: datum.commonName.replace(' Underground Station', ''),
-                    naptanId: datum.naptanId,
+                    stationId: datum.naptanId,
                     lines: linesAtStation,
                     lat: datum.lat,
                     lon: datum.lon
                 });
             });
 
-            module.exports.getConsecutiveStations(stations).then((linkedStations) => {
-                resolve(linkedStations);
-            });
+            resolve(stations);
+        });
+    });
+};
+
+module.exports.getAllRoutesOnAllLines = function() {
+    const options = {
+        host: 'api.tfl.gov.uk'
+    };
+
+    return db.retrieveAllLines().then((lines) => {
+        return Promise.all(
+            lines.map((line) => {
+                return line.id;
+            }).map((line) => {
+                options.path = `/Line/${line}/Route/Sequence/outbound?excludeCrowding=false&serviceTypes=regular,night&app_key=${appKey}&app_id=${appId}`;
+                return module.exports.makeRequest(options).then((data) => {
+                    const routeStrs = data.lineStrings;
+                    const routesArr = [];
+                    routesArr.push({ line });
+                    for (let r = 0; r < routeStrs.length; r++) {
+                        const routeArr = [];
+                        const routes = routeStrs[r].replace(/(\[|])/g, '').split(',');
+                        for (let s = 0; s < routes.length; s += 2) {
+                            routeArr.push(
+                                {
+                                    lon: routes[s],
+                                    lat: routes[s + 1]
+                                }
+                            );
+                        }
+                        routesArr.push(routeArr);
+                    }
+                    return routesArr;
+                });
+            })
+        ).then((routes) => {
+            return routes;
         });
     });
 };

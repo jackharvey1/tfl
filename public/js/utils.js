@@ -1,10 +1,15 @@
 /* eslint no-unused-vars:off */
-function showTooltip(element) {
-    const e = element.nextSibling;
-    e.className = e.className.replace('hidden', '');
+
+function flattenObjectArray(arr) {
+    return arr.map((a) => {
+        return [a.lat, a.lon];
+    });
 }
 
-function hideTooltip(element) {
-    const e = element.nextSibling;
-    e.className += 'hidden';
+function getLineColour(lines, line) {
+    for (var l = 0; l < lines.length; l++) {
+        if (lines[l].id === line) {
+            return lines[l].colour;
+        }
+    }
 }

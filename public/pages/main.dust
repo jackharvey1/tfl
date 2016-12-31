@@ -6,6 +6,7 @@
         <script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
         <link rel="stylesheet" href="/styles/main.css" />
         <script src="/js/main.js"></script>
+        <script src="/js/utils.js"></script>
     </head>
     <body onload="init()">
         <div id="map"></div>

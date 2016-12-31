@@ -3,9 +3,14 @@
 const unique = require('lodash/uniq');
 const flatten = require('lodash/flatten');
 const assign = require('lodash/assign');
+const forEach = require('lodash/forEach');
 
 module.exports.detflify = function(str) {
     return str.replace('-', ' & ').replace(/(^\w|\s\w)/g, (letter) => letter.toUpperCase());
+};
+
+module.exports.cleanStationName = function(str) {
+    return str.replace(' Underground Station', '');
 };
 
 module.exports.mergeObjectArray = function(arr) {

@@ -21,7 +21,7 @@
   },
   "scripts": {
     "watch": "nodemon app.js",
-    "test": "mocha --recursive --timeout 15000 || true"
+    "test": "mocha --recursive --timeout 3000 || true"
   },
   "author": "",
   "license": "ISC",

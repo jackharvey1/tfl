@@ -3,16 +3,20 @@ const mongoose = require('mongoose');
 const lineSchema = new mongoose.Schema({
     name: String,
     id: { type: String, unique: true },
-    updatedAt: { type: Date, default: Date.now }
+    colour: String
 });
 
 const stationSchema = new mongoose.Schema({
     stationName: String,
-    naptanId: { type: String, unique: true },
+    stationId: { type: String, unique: true },
     lines: Array,
     lat: Number,
-    lon: Number,
-    updatedAt: { type: Date, default: Date.now }
+    lon: Number
+});
+
+const routeSchema = new mongoose.Schema({
+    line: String,
+    pointGroups: Array
 });
 
 const arrivalSchema = new mongoose.Schema({
@@ -24,4 +28,5 @@ const arrivalSchema = new mongoose.Schema({
 
 module.exports.Line = mongoose.model('Lines', lineSchema);
 module.exports.Station = mongoose.model('Stations', stationSchema);
+module.exports.Route = mongoose.model('Routes', routeSchema);
 module.exports.Arrival = mongoose.model('Arrivals', arrivalSchema);

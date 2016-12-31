@@ -32,5 +32,29 @@ describe('Helper functions', function() {
                 }
             });
         });
+
+        it('flattens object arrays', function() {
+            let arr = [
+                {
+                    lat: 50,
+                    lon: 0
+                }, {
+                    lat: 51,
+                    lon: 1
+                }
+            ];
+
+            arr = util.flattenObjectArray(arr);
+
+            expect(arr).to.deep.equal([
+                [
+                    50,
+                    0
+                ], [
+                    51,
+                    1
+                ]
+            ]);
+        });
     });
 });

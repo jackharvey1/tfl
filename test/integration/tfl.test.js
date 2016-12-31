@@ -44,19 +44,19 @@ describe('TfL calls', function() {
                 return expect(stations).to.deep.equal([
                     {
                         stationName: 'Blackhorse Road',
-                        naptanId: '940GZZLUBLR',
+                        stationId: '940GZZLUBLR',
                         lines: ['Victoria'],
                         lat: 51.586919,
                         lon: -0.04115
                     }, {
                         stationName: 'Brixton',
-                        naptanId: '940GZZLUBXN',
+                        stationId: '940GZZLUBXN',
                         lines: ['Victoria'],
                         lat: 51.462618,
                         lon: -0.114888
                     }, {
                         stationName: 'Euston',
-                        naptanId: '940GZZLUEUS',
+                        stationId: '940GZZLUEUS',
                         lines: ['Northern', 'Victoria'],
                         lat: 51.528055,
                         lon: -0.132182
@@ -84,7 +84,7 @@ describe('TfL calls', function() {
             sandbox.stub(tfl, 'getAllStationsOnLine', function(line) {
                 return Promise.resolve({
                     stationName: `station on ${line}`,
-                    naptanId: `station on ${line} id`,
+                    stationId: `station on ${line} id`,
                     lines: ['some', 'test', 'lines'],
                     lat: 50,
                     lon: 0
@@ -95,19 +95,19 @@ describe('TfL calls', function() {
                 return expect(stations).to.deep.equal([
                     {
                         stationName: `station on victoria`,
-                        naptanId: `station on victoria id`,
+                        stationId: `station on victoria id`,
                         lines: ['some', 'test', 'lines'],
                         lat: 50,
                         lon: 0
                     }, {
                         stationName: `station on hammersmith-city`,
-                        naptanId: `station on hammersmith-city id`,
+                        stationId: `station on hammersmith-city id`,
                         lines: ['some', 'test', 'lines'],
                         lat: 50,
                         lon: 0
                     }, {
                         stationName: `station on jubilee`,
-                        naptanId: `station on jubilee id`,
+                        stationId: `station on jubilee id`,
                         lines: ['some', 'test', 'lines'],
                         lat: 50,
                         lon: 0
@@ -154,19 +154,19 @@ describe('TfL calls', function() {
                 return Promise.resolve([
                     {
                         stationName: `King's Cross`,
-                        naptanId: `940XKGX`,
+                        stationId: `940XKGX`,
                         lines: ['Metropolitan', 'Victoria', 'Northern'],
                         lat: 50,
                         lon: 0
                     }, {
                         stationName: `Bank`,
-                        naptanId: `940XBNK`,
+                        stationId: `940XBNK`,
                         lines: ['Northern', 'Central'],
                         lat: 50,
                         lon: 0
                     }, {
                         stationName: `Highbury & Islington`,
-                        naptanId: `940XISL`,
+                        stationId: `940XISL`,
                         lines: ['Victoria'],
                         lat: 50,
                         lon: 0
@@ -174,11 +174,11 @@ describe('TfL calls', function() {
                 ]);
             });
 
-            sandbox.stub(tfl, 'getAllArrivalsAt', function(stationNaptanId) {
+            sandbox.stub(tfl, 'getAllArrivalsAt', function(stationId) {
                 return Promise.resolve({
-                    arrivalId: `arrival at ${stationNaptanId}`,
+                    arrivalId: `arrival at ${stationId}`,
                     vehicleId: `vehicleId`,
-                    stationName: `${stationNaptanId}`,
+                    stationName: `${stationId}`,
                     expectedArrival: `1970-01-01T12.00.00.00000`
                 });
             });
@@ -201,7 +201,7 @@ describe('TfL calls', function() {
                         stationName: `940XISL`,
                         expectedArrival: `1970-01-01T12.00.00.00000`
                     }
-                ])
+                ]);
             });
         });
     });
