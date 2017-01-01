@@ -1,6 +1,7 @@
 # TODO
 
 # PROBLEMS
+Set it up so that retrieve calls check if anything has been saved, and if not then tfl call rather than running at app start
 Why does the amount of entries shown in robomongo not match the saved + already saved output?
 Is having to have the db running for tests to pass bad? If so, how do I mock it out? Fails on `mongoose.connect`.
 `module.exports`, e.g. `module.exports.makeRequest` is needed for tests. Is there a way to not do this?

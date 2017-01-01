@@ -2,7 +2,7 @@
 
 'use strict';
 
-const util = require('../../src/helpers/utils');
+const utils = require('../../src/helpers/utils');
 
 describe('Helper functions', function() {
     describe('of type utility', function() {
@@ -21,7 +21,7 @@ describe('Helper functions', function() {
                 }
             }];
 
-            arr = util.mergeObjectArray(arr);
+            arr = utils.mergeObjectArray(arr);
 
             expect(arr).to.deep.equal({
                 one: {
@@ -33,28 +33,113 @@ describe('Helper functions', function() {
             });
         });
 
-        it('flattens object arrays', function() {
+        it('finds duplicates', function() {
             let arr = [
                 {
-                    lat: 50,
-                    lon: 0
+                    line: 'bakerloo',
+                    pointGroups: [
+                        [
+                            {
+                                lat: '51.4',
+                                lon: '-0.3'
+                            }, {
+                                lat: '50.0',
+                                lon: '-0.1'
+                            }, {
+                                lat: '50.1',
+                                lon: '-0.2'
+                            }
+                        ]
+                    ]
                 }, {
-                    lat: 51,
-                    lon: 1
+                    line: 'victoria',
+                    pointGroups: [
+                        [
+                            {
+                                lat: '50.0',
+                                lon: '-0.1'
+                            }, {
+                                lat: '50.1',
+                                lon: '-0.2'
+                            }, {
+                                lat: '51.0',
+                                lon: '-0.2'
+                            }
+                        ]
+                    ]
+                }, {
+                    line: 'northern',
+                    pointGroups: [
+                        [
+                            {
+                                lat: '50.0',
+                                lon: '-0.1'
+                            }, {
+                                lat: '50.1',
+                                lon: '-0.2'
+                            }
+                        ]
+                    ]
                 }
             ];
 
-            arr = util.flattenObjectArray(arr);
+            arr = utils.bunchDuplicatePointPairs(arr);
 
             expect(arr).to.deep.equal([
-                [
-                    50,
-                    0
-                ], [
-                    51,
-                    1
-                ]
+                {
+                    lines: ['bakerloo'],
+                    pair: [
+                        {
+                            lat: '51.4',
+                            lon: '-0.3'
+                        },
+                        {
+                            lat: '50.0',
+                            lon: '-0.1'
+                        }
+                    ]
+                }, {
+                    lines: ['bakerloo', 'victoria', 'northern'],
+                    pair: [
+                        {
+                            lat: '50.0',
+                            lon: '-0.1'
+                        }, {
+                            lat: '50.1',
+                            lon: '-0.2'
+                        }
+                    ]
+                }, {
+                    lines: ['victoria'],
+                    pair: [
+                        {
+                            lat: '50.1',
+                            lon: '-0.2'
+                        }, {
+                            lat: '51.0',
+                            lon: '-0.2'
+                        }
+                    ]
+                }
             ]);
+        });
+
+        it('finds equivalence in arrays of objects', function() {
+            const arr1 = [
+                {
+                    a: 1,
+                    b: 2
+                }
+            ];
+
+            const arr2 = [
+                {
+                    a: 1,
+                    b: 2
+                }
+            ];
+
+            expect(utils.equals(arr1, arr2)).to.equal(true);
         });
     });
 });

@@ -11,11 +11,11 @@ const path = require('path');
 const fs = require('fs');
 
 const db = require('./src/db/db');
-const tfl = require('./src/js/tfl');
 const merge = require('./src/helpers/utils').mergeObjectArray;
 const max = require('./src/helpers/db').max;
 const min = require('./src/helpers/db').min;
 const models = require('./src/db/models');
+const bunch = require('./src/helpers/utils').bunchDuplicatePointPairs;
 
 const Station = models.Station;
 
@@ -49,16 +49,6 @@ app.get('/stationStats', (req, res) => {
         });
 
         res.send(minimaxes);
-    });
-});
-
-app.get('/lineData', (req, res) => {
-    let lines = [];
-    db.retrieveAllLines().then((dbLines) => {
-        lines = dbLines;
-        db.retrieveAllRoutesOnAllLines();
-    }).then((routes) => {
-        res.send({lines, routes});
     });
 });
 
@@ -98,7 +88,7 @@ app.get('/lines', (req, res) => {
 
 app.get('/routes', (req, res) => {
     db.retrieveAllRoutesOnAllLines().then((routes) => {
-        res.json(routes);
+        res.json(bunch(routes));
         res.end();
     });
 });
