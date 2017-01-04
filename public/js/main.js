@@ -2,11 +2,9 @@
 
 var markers = [];
 var map;
-
-var strokeSize = 3;
-var offsetSize = strokeSize;
-
 var bounds;
+
+var lineWidth = 3;
 
 var stationIcon = L.icon({
     iconUrl: '/img/circle.png',
@@ -23,22 +21,6 @@ function fetch(url) {
     });
 }
 
-function fetchLines() {
-    return fetch('/lines');
-}
-
-function fetchStations() {
-    return fetch('/stations/all');
-}
-
-function fetchRoutes() {
-    return fetch('/routes');
-}
-
-function fetchStationStats() {
-    return fetch('/stationStats');
-}
-
 function makeMapStatic() {
     map.dragging.disable();
     map.touchZoom.disable();
@@ -50,9 +32,9 @@ function fitMapToBounds() {
     map.fitBounds(bounds);
 }
 
-function addStations(stations) {
-    for (let s = 0; s < stations.length; s++) {
-        markers.push(L.marker([stations[s].lat, stations[s].lon], {icon: stationIcon}));
+function createMarkers(latLngArray, icon) {
+    for (let s = 0; s < latLngArray.length; s++) {
+        markers.push(L.marker(latLngArray[s], { icon }));
         markers[s].addTo(map);
     }
 }
@@ -60,38 +42,39 @@ function addStations(stations) {
 function drawLines(lines, routes) {
     for (var i = 0; i < routes.length; i++) {
         var lineCount = routes[i].lines.length;
+        var offsetStart = (lineWidth * (lineCount - 1)) / 2;
         for (var j = 0; j < lineCount; j++) {
             var colour = getLineColour(lines, routes[i].lines[j]);
-            var offsetStart = (-offsetSize * (lineCount - 1)) / 2;
             var pl = L.polyline(
                 routes[i].pair,
                 {
                     color: colour,
-                    offset: offsetStart + (j * offsetSize),
-                    weight: strokeSize
+                    offset: offsetStart - (j * lineWidth),
+                    weight: lineWidth
                 }
             ).addTo(map);
         }
     }
 }
 
+function createMap() {
+    map = L.map('map', { zoomControl: false });
+
+    L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+}
+
 function init() {
-    fetchStations().then((stations) => {
+    fetch('/stations/all').then((stations) => {
         return new Promise((resolve) => {
-            map = L.map('map', { zoomControl: false });
-
+            createMap();
             makeMapStatic();
-
-            L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-
-            addStations(stations);
-
+            createMarkers(stations, stationIcon);
             resolve();
         });
     }).then(() => {
-        fetchStationStats().then((stats) => {
+        fetch('/stationStats').then((stats) => {
             bounds = [
                 [stats.lat.max, stats.lon.min],
                 [stats.lat.min, stats.lon.max]
@@ -101,8 +84,8 @@ function init() {
         });
     });
 
-    fetchLines().then((lines) => {
-        fetchRoutes().then((routes) => {
+    fetch('/lines').then((lines) => {
+        fetch('/routes').then((routes) => {
             drawLines(lines, routes);
         });
     });

@@ -17,14 +17,12 @@ module.exports.mergeObjectArray = function(arr) {
     let keys = [];
 
     arr.forEach((element) => {
-        keys.push(Object.keys(element));
+        const key = Object.keys(element);
+        keys.push(key);
+        merged[key] = {};
     });
 
     keys = unique(flatten(keys));
-
-    keys.forEach((key) => {
-        merged[key] = {};
-    });
 
     arr.forEach((element) => {
         keys.forEach((key) => {

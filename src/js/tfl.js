@@ -6,6 +6,7 @@ const removeDuplicatesBy = require('lodash/uniqBy');
 const db = require('../db/db');
 const config = require('./../../config/config');
 const detflify = require('../helpers/utils').detflify;
+const cleanStationName = require('../helpers/utils').cleanStationName;
 
 const appId = config.app.id;
 const appKey = config.app.key;
@@ -85,7 +86,7 @@ module.exports.getAllStationsOnLine = function(line) {
                 }
 
                 stations.push({
-                    stationName: datum.commonName.replace(' Underground Station', ''),
+                    stationName: cleanStationName(datum.commonName),
                     stationId: datum.naptanId,
                     lines: linesAtStation,
                     lat: datum.lat,
