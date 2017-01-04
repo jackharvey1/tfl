@@ -6,6 +6,8 @@ var map;
 var strokeSize = 3;
 var offsetSize = strokeSize;
 
+var bounds;
+
 var stationIcon = L.icon({
     iconUrl: '/img/circle.png',
     iconSize: [8, 8],
@@ -42,6 +44,10 @@ function makeMapStatic() {
     map.touchZoom.disable();
     map.doubleClickZoom.disable();
     map.scrollWheelZoom.disable();
+}
+
+function fitMapToBounds() {
+    map.fitBounds(bounds);
 }
 
 function addStations(stations) {
@@ -86,10 +92,12 @@ function init() {
         });
     }).then(() => {
         fetchStationStats().then((stats) => {
-            map.fitBounds([
+            bounds = [
                 [stats.lat.max, stats.lon.min],
                 [stats.lat.min, stats.lon.max]
-            ]);
+            ];
+            fitMapToBounds();
+            window.onresize = fitMapToBounds;
         });
     });
 
