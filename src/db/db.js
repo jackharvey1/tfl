@@ -14,12 +14,48 @@ const Arrival = models.Arrival;
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/tfl');
 
+module.exports.saveAllArrivalsAtAllStations = function() {
+    return tfl.getAllArrivalsAtAllStations().then((arrivals) => {
+        return Promise.all(
+            arrivals.map((arrival) => {
+                return new Promise((resolve) => {
+                    Arrival.count({ arrivalId: arrival.arrivalId }, (err, count) => {
+                        if (count > 0) {
+                            resolve(null);
+                        } else {
+                            const expected = new Date(arrival.expectedArrival);
+                            expected.setMilliseconds(0);
+
+                            const arrivalEntry = new Arrival({
+                                arrivalId: arrival.arrivalId,
+                                vehicleId: arrival.vehicleId,
+                                stationId: arrival.stationId,
+                                expectedArrival: expected
+                            });
+
+                            arrivalEntry.save((err) => {
+                                if (err) {
+                                    resolve(false);
+                                } else {
+                                    resolve(true);
+                                }
+                            });
+                        }
+                    });
+                });
+            })
+        ).then((arrivals) => {
+            const results = parseSaveResults(arrivals);
+
+            console.log(`Arrivals: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
+        });
+    });
+};
+
 module.exports.saveAllRoutesOnAllLines = function() {
     return tfl.getAllRoutesOnAllLines().then((paths) => {
         return Route.remove(() => {
-            return new Promise((resolve) => {
-                resolve();
-            });
+            return Promise.resolve();
         }).then(() => {
             return Promise.all(
                 paths.map((pathGroup) => {
@@ -51,59 +87,10 @@ module.exports.saveAllRoutesOnAllLines = function() {
                     });
                 })
             ).then((parsedPaths) => {
-                parsedPaths = flatten(parsedPaths);
+                const results = parseSaveResults(parsedPaths);
 
-                const saved = parsedPaths.filter((a) => {
-                    return a === true;
-                }).length;
-
-                const errored = parsedPaths.filter((a) => {
-                    return a === false;
-                }).length;
-
-                console.log(`Route groups: ${saved} saved and ${errored} errored.`);
+                console.log(`Route groups: ${results.saved} saved and ${results.errored} errored`);
             });
-        });
-    });
-};
-
-module.exports.saveAllArrivalsAtAllStations = function() {
-    return tfl.getAllArrivalsAtAllStations().then((arrivals) => {
-        return Promise.all(
-            arrivals.map((arrival) => {
-                return new Promise((resolve) => {
-                    Arrival.count({ arrivalId: arrival.arrivalId }, (err, count) => {
-                        if (count > 0) {
-                            resolve(false);
-                        } else {
-                            const arrivalEntry = new Arrival({
-                                arrivalId: arrival.arrivalId,
-                                vehicleId: arrival.vehicleId,
-                                station: arrival.station,
-                                expectedArrival: arrival.expectedArrival
-                            });
-
-                            arrivalEntry.save((err) => {
-                                if (!err) {
-                                    resolve(true);
-                                }
-                            });
-                        }
-                    });
-                });
-            })
-        ).then((arrivals) => {
-            arrivals = flatten(arrivals);
-
-            const skipped = arrivals.filter((a) => {
-                return a === true;
-            }).length;
-
-            const saved = arrivals.filter((a) => {
-                return a === false;
-            }).length;
-
-            console.log(`Arrivals: ${saved} saved and ${skipped} already saved.`);
         });
     });
 };
@@ -137,21 +124,9 @@ module.exports.saveAllStationsOnAllLines = function() {
                 });
             })
         ).then((stations) => {
-            stations = flatten(stations);
+            const results = parseSaveResults(stations);
 
-            const skipped = stations.filter((s) => {
-                return s === null;
-            }).length;
-
-            const saved = stations.filter((s) => {
-                return s === true;
-            }).length;
-
-            const errored = stations.filter((s) => {
-                return s === null;
-            }).length;
-
-            console.log(`Stations: ${saved} saved, ${skipped} already saved and ${errored} errors.`);
+            console.log(`Stations: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
         });
     });
 };
@@ -163,7 +138,7 @@ module.exports.saveAllLines = function() {
                 return new Promise((resolve) => {
                     Line.count({ id: line.id }, (err, count) => {
                         if (count > 0) {
-                            resolve(false);
+                            resolve(null);
                         } else {
                             const lineEntry = new Line({
                                 name: line.name,
@@ -172,7 +147,9 @@ module.exports.saveAllLines = function() {
                             });
 
                             lineEntry.save((err) => {
-                                if (!err) {
+                                if (err) {
+                                    resolve(false);
+                                } else {
                                     resolve(true);
                                 }
                             });
@@ -181,17 +158,73 @@ module.exports.saveAllLines = function() {
                 });
             })
         ).then((lines) => {
-            lines = flatten(lines);
+            const results = parseSaveResults(lines);
 
-            const skipped = lines.filter((l) => {
-                return l === false;
-            }).length;
+            console.log(`Lines: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
+        });
+    });
+};
 
-            const saved = lines.filter((l) => {
-                return l === true;
-            }).length;
+module.exports.retrieveAllArrivalsOnAllLines = function() {
+    return retrieve(Arrival);
+};
 
-            console.log(`Lines: ${saved} saved and ${skipped} already saved.`);
+module.exports.retrieveAllRoutesOnAllLines = function() {
+    return retrieve(Route);
+};
+
+module.exports.retrieveAllStationsOnAllLines = function() {
+    return retrieve(Station);
+};
+
+module.exports.retrieveAllStationsOnLine = function(line) {
+    return retrieve(Station, { lines: line });
+};
+
+module.exports.retrieveAllLines = function() {
+    return retrieve(Line);
+};
+
+function retrieve(model, query = {}) {
+    return new Promise((resolve, reject) => {
+        model.find(query, (err, result) => {
+            if (err) {
+                reject(err);
+            }
+            resolve(result);
+        });
+    });
+}
+
+module.exports.clearDatabase = function() {
+    const models = [
+        {
+            name: Line,
+            string: 'lines'
+        }, {
+            name: Station,
+            string: 'stations'
+        }, {
+            name: Route,
+            string: 'routes'
+        }, {
+            name: Arrival,
+            string: 'arrivals'
+        }
+    ];
+
+    return Promise.all(models.map((model) => {
+        return new Promise((resolve) => {
+            model.name.remove({}, (err, obj) => {
+                resolve({
+                    model: model.string,
+                    count: obj.result.n
+                });
+            });
+        });
+    })).then((removals) => {
+        removals.forEach((removal) => {
+            console.log(`Removed ${removal.count} ${removal.model}`);
         });
     });
 };
@@ -202,87 +235,40 @@ module.exports.cleanArrivals = function() {
     Arrival.remove({
         expectedArrival: {$lt: now}
     }, (err, obj) => {
-        console.log(`Removed ${obj.result.n} arrival entries`);
+        console.log(`Cleaned up ${obj.result.n} arrival entries`);
     });
 };
 
-module.exports.retrieveAllRoutesOnAllLines = function() {
-    return new Promise((resolve, reject) => {
-        Route.find({}, (err, routes) => {
-            if (err) {
-                reject(err);
-            }
-            resolve(routes);
+module.exports.runArrivalCheckJob = function() {
+    const now = new Date().setMilliseconds(0);
+
+    return new Promise((resolve) => {
+        Arrival.find({
+            expectedArrival: {$eq: now}
+        }, (err, arrivals) => {
+            resolve(arrivals);
         });
     });
 };
 
-module.exports.retrieveAllStationsOnAllLines = function() {
-    return new Promise((resolve, reject) => {
-        Station.find({}, (err, stations) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(stations);
-        });
-    });
-};
+function parseSaveResults(results) {
+    results = flatten(results);
 
-module.exports.retrieveAllStationsOnLine = function(line) {
-    return new Promise((resolve, reject) => {
-        Station.find({ lines: line }, (err, stations) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(stations);
-        });
-    });
-};
+    const skipped = results.filter((result) => {
+        return result === null;
+    }).length;
 
-module.exports.retrieveAllLines = function() {
-    return new Promise((resolve, reject) => {
-        Line.find({}, (err, lines) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(lines);
-        });
-    });
-};
+    const saved = results.filter((result) => {
+        return result === true;
+    }).length;
 
-module.exports.clearDatabase = function() {
-    return Promise.all([
-        Line.remove({}, (err, obj) => {
-            return new Promise((resolve) => {
-                resolve({
-                    lines: obj.result.n
-                });
-            });
-        }),
-        Station.remove({}, (err, obj) => {
-            return new Promise((resolve) => {
-                resolve({
-                    stations: obj.result.n
-                });
-            });
-        }),
-        Route.remove({}, (err, obj) => {
-            return new Promise((resolve) => {
-                resolve({
-                    routes: obj.result.n
-                });
-            });
-        }),
-        Arrival.remove({}, (err, obj) => {
-            return new Promise((resolve) => {
-                resolve({
-                    arrivals: obj.result.n
-                });
-            });
-        })
-    ]).then((removals) => {
-        removals.forEach((removal) => {
-            console.log(`Removed ${removal}`);
-        });
-    });
-};
+    const errored = results.filter((result) => {
+        return result === false;
+    }).length;
+
+    return {
+        skipped,
+        saved,
+        errored
+    };
+}

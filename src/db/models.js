@@ -21,7 +21,7 @@ const routeSchema = new mongoose.Schema({
 
 const arrivalSchema = new mongoose.Schema({
     arrivalId: { type: String, unique: true },
-    station: String,
+    stationId: String,
     vehicleId: Number,
     expectedArrival: Date
 });

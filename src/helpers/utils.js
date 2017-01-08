@@ -75,7 +75,7 @@ module.exports.bunchDuplicatePointPairs = function(routeGroups) {
 };
 
 module.exports.equals = function(arr1, arr2) {
-    if (!arr2) {
+    if (!arr1 || !arr2) {
         return false;
     }
 
