@@ -39,7 +39,7 @@ module.exports.getAllArrivalsAt = function(stationId) {
                 arrivals.push({
                     arrivalId: datum.id,
                     vehicleId: datum.vehicleId,
-                    stationName: datum.stationName,
+                    stationId: datum.naptanId,
                     expectedArrival: datum.expectedArrival
                 });
             });

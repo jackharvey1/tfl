@@ -1,7 +1,8 @@
+/* eslint no-invalid-this:off */
+
 'use strict';
 
 const express = require('express');
-require('console-stamp')(console, 'HH:MM:ss.l');
 const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
 const assign = require('lodash/assign');
@@ -17,51 +18,40 @@ const min = require('./src/helpers/db').min;
 const models = require('./src/db/models');
 const bunch = require('./src/helpers/utils').bunchDuplicatePointPairs;
 
+require('console-stamp')(console, 'HH:MM:ss.l');
+
 const Station = models.Station;
 
 const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+io.on('connection', () => {
+    console.log('User connected');
+});
 
 app.get('/', (req, res) => {
     fs.readFile(path.join(__dirname, 'public/pages/main.dust'), "utf8", (err, template) => {
         const compiled = dust.compile(template, "main");
         dust.loadSource(compiled);
 
-        dust.render("main", {}, function(err, html) {
+        dust.render("main", {}, (err, html) => {
             res.send(html);
         });
     });
 });
 
-app.get('/stationStats', (req, res) => {
+app.get('/bounds', (req, res) => {
     Promise.all([
         max(Station, 'lat'),
         min(Station, 'lat'),
         max(Station, 'lon'),
         min(Station, 'lon')
     ]).then((obj) => {
-        const minimaxes = merge(obj);
-
-        forEach(minimaxes, (m) => {
-            assign(m, { diff: Math.round((m.max - m.min) * 100) / 100 });
-        });
-
-        res.send(minimaxes);
-    });
-});
-
-app.get('/list', (req, res) => {
-    fs.readFile(path.join(__dirname, 'public/pages/list.dust'), "utf8", (err, template) => {
-        const compiled = dust.compile(template, "list");
-        dust.loadSource(compiled);
-
-        db.retrieveAllStationsOnAllLines().then((stations) => {
-            dust.render("list", {stations}, function(err, html) {
-                res.send(html);
-            });
-        });
+        res.send(merge(obj));
     });
 });
 
@@ -93,7 +83,7 @@ app.get('/routes', (req, res) => {
     });
 });
 
-app.listen(3000, () => {
+server.listen(3000, () => {
     console.log('Listening on port 3000');
     if (process.env.NODE_ENV === 'clean') {
         db.clearDatabase();
@@ -103,16 +93,24 @@ app.listen(3000, () => {
                 db.saveAllRoutesOnAllLines();
             });
         });
-    } else if (!process.env.NODE_ENV || process.env.NODE_ENV === 'live') {
+    } else {
         db.saveAllLines().then(() => {
-            db.saveAllStationsOnAllLines().then(() => {
-                new CronJob('* * * * *', function() {
-                    db.cleanArrivals();
-                }, null, true);
+            db.saveAllRoutesOnAllLines().then(() => {
+                db.saveAllStationsOnAllLines().then(() => {
+                    new CronJob('* * * * *', () => {
+                        db.cleanArrivals();
+                    }, null, true, 'UTC', this, true);
 
-                new CronJob('* * * * *', function() {
-                    db.saveAllArrivalsAtAllStations();
-                }, null, true);
+                    new CronJob('* * * * *', () => {
+                        db.saveAllArrivalsAtAllStations();
+                    }, null, true, 'UTC', this, true);
+
+                    setInterval(() => {
+                        db.runArrivalCheckJob().then((arrivals) => {
+                            io.emit('arrivals', arrivals);
+                        });
+                    }, 1000);
+                });
             });
         });
     }

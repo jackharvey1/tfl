@@ -1,13 +1,22 @@
 /* eslint no-var: off, vars-on-top:off, no-undef: off, no-unused-vars:off, init-declarations: off */
 
-var markers = [];
 var map;
+var socket;
+
+var markers = [];
 var bounds;
 
 var lineWidth = 3;
 
 var stationIcon = L.icon({
     iconUrl: '/img/circle.png',
+    iconSize: [8, 8],
+    iconAnchor: [4, 4],
+    popupAnchor: [4, 0]
+});
+
+var blinkIcon = L.icon({
+    iconUrl: '/img/circle-blink.png',
     iconSize: [8, 8],
     iconAnchor: [4, 4],
     popupAnchor: [4, 0]
@@ -32,10 +41,11 @@ function fitMapToBounds() {
     map.fitBounds(bounds);
 }
 
-function createMarkers(latLngArray, icon) {
-    for (let s = 0; s < latLngArray.length; s++) {
-        markers.push(L.marker(latLngArray[s], { icon }));
+function createStationMarkers(stations, icon) {
+    for (let s = 0; s < stations.length; s++) {
+        markers.push(L.marker(stations[s], { icon }));
         markers[s].addTo(map);
+        markers[s].stationId = stations[s].stationId;
     }
 }
 
@@ -66,27 +76,53 @@ function createMap() {
 }
 
 function init() {
-    fetch('/stations/all').then((stations) => {
-        return new Promise((resolve) => {
-            createMap();
-            makeMapStatic();
-            createMarkers(stations, stationIcon);
-            resolve();
-        });
-    }).then(() => {
-        fetch('/stationStats').then((stats) => {
-            bounds = [
-                [stats.lat.max, stats.lon.min],
-                [stats.lat.min, stats.lon.max]
-            ];
-            fitMapToBounds();
-            window.onresize = fitMapToBounds;
-        });
-    });
+    createMap();
+    makeMapStatic();
+    fetch('/bounds').then((stats) => {
+        bounds = [
+            [stats.lat.max, stats.lon.min],
+            [stats.lat.min, stats.lon.max]
+        ];
+        fitMapToBounds();
+        window.onresize = fitMapToBounds;
+    })
+    .then(fetch('/stations/all')
+        .then((stations) => {
+            return new Promise((resolve) => {
+                createStationMarkers(stations, stationIcon);
+                resolve();
+            });
+        })
+    ).then(initiateSocketListener());
 
     fetch('/lines').then((lines) => {
         fetch('/routes').then((routes) => {
             drawLines(lines, routes);
         });
+    });
+
+}
+
+function initiateSocketListener() {
+    socket = io();
+
+    socket.on('arrivals', function (arrivals) {
+        if (arrivals.length > 0) {
+            blinkIconsForArrivals(arrivals);
+        }
+    });
+}
+
+function blinkIconsForArrivals(arrivals) {
+    arrivals.forEach((arrival) => {
+        const marker = markers.find((marker) => {
+            return marker.stationId === arrival.stationId;
+        });
+
+        marker.setIcon(blinkIcon);
+
+        setTimeout(() => {
+            marker.setIcon(stationIcon);
+        }, 1500);
     });
 }
