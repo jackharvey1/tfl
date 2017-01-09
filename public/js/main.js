@@ -78,21 +78,22 @@ function createMap() {
 function init() {
     createMap();
     makeMapStatic();
-    fetch('/stations/all').then((stations) => {
-        return new Promise((resolve) => {
-            createStationMarkers(stations, stationIcon);
-            resolve();
-        });
-    }).then(() => {
-        fetch('/bounds').then((stats) => {
-            bounds = [
-                [stats.lat.max, stats.lon.min],
-                [stats.lat.min, stats.lon.max]
-            ];
-            fitMapToBounds();
-            window.onresize = fitMapToBounds;
-        });
-    }).then(initiateSocketListener());
+    fetch('/bounds').then((stats) => {
+        bounds = [
+            [stats.lat.max, stats.lon.min],
+            [stats.lat.min, stats.lon.max]
+        ];
+        fitMapToBounds();
+        window.onresize = fitMapToBounds;
+    })
+    .then(fetch('/stations/all')
+        .then((stations) => {
+            return new Promise((resolve) => {
+                createStationMarkers(stations, stationIcon);
+                resolve();
+            });
+        })
+    ).then(initiateSocketListener());
 
     fetch('/lines').then((lines) => {
         fetch('/routes').then((routes) => {
