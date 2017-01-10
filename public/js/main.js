@@ -37,10 +37,6 @@ function makeMapStatic() {
     map.scrollWheelZoom.disable();
 }
 
-function fitMapToBounds() {
-    map.fitBounds(bounds);
-}
-
 function createStationMarkers(stations, icon) {
     for (let s = 0; s < stations.length; s++) {
         markers.push(L.marker(stations[s], { icon }));
@@ -68,7 +64,13 @@ function drawLines(lines, routes) {
 }
 
 function createMap() {
-    map = L.map('map', { zoomControl: false });
+    map = L.map('map', {
+        center: bounds.getCenter(),
+        maxBounds: bounds,
+        zoom: 11,
+        minZoom: 11,
+        zoomControl: false
+    });
 
     L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -76,15 +78,13 @@ function createMap() {
 }
 
 function init() {
-    createMap();
-    makeMapStatic();
     fetch('/bounds').then((stats) => {
-        bounds = [
-            [stats.lat.max, stats.lon.min],
-            [stats.lat.min, stats.lon.max]
-        ];
-        fitMapToBounds();
-        window.onresize = fitMapToBounds;
+        bounds = new L.LatLngBounds([
+            [stats.lat.max + 0.01, stats.lon.max + 0.01],
+            [stats.lat.min - 0.01, stats.lon.min - 0.01]
+        ]);
+
+        createMap();
     })
     .then(fetch('/stations/all')
         .then((stations) => {
@@ -93,13 +93,13 @@ function init() {
                 resolve();
             });
         })
-    ).then(initiateSocketListener());
-
-    fetch('/lines').then((lines) => {
+    )
+    .then(fetch('/lines').then((lines) => {
         fetch('/routes').then((routes) => {
             drawLines(lines, routes);
         });
-    });
+    }))
+    .then(initiateSocketListener());
 
 }
 
