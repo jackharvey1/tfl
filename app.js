@@ -5,8 +5,6 @@
 const express = require('express');
 const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
-const assign = require('lodash/assign');
-const forEach = require('lodash/forEach');
 const CronJob = require('cron').CronJob;
 const path = require('path');
 const fs = require('fs');
@@ -86,7 +84,9 @@ app.get('/routes', (req, res) => {
 server.listen(3000, () => {
     console.log('Listening on port 3000');
     if (process.env.NODE_ENV === 'clean') {
-        db.clearDatabase();
+        db.clearDatabase().then(() => {
+            process.exit(0);
+        });
     } else if (process.env.NODE_ENV === 'quiet') {
         db.saveAllLines().then(() => {
             db.saveAllStationsOnAllLines().then(() => {
