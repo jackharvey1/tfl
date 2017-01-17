@@ -1,25 +1,36 @@
 /* eslint no-var: off, vars-on-top:off, no-undef: off, no-unused-vars:off, init-declarations: off */
 
-var map;
-var socket;
+let map;
+let socket;
 
-var markers = [];
-var bounds;
+let bounds, stations, lines, routes;
+const markers = [];
 
-var lineWidth = 3;
+const lineWidth = 3;
+const markerSize = 8;
+const overlappingZoom = 11;
 
-var stationIcon = L.icon({
-    iconUrl: '/img/circle.png',
-    iconSize: [8, 8],
-    iconAnchor: [4, 4],
-    popupAnchor: [4, 0]
+let currentIcon;
+
+const blankIcon = L.icon({
+    iconUrl: '/img/blank.png',
+    iconSize: [markerSize, markerSize],
+    iconAnchor: [markerSize / 2, markerSize / 2],
+    popupAnchor: [0, -markerSize / 2]
 });
 
-var blinkIcon = L.icon({
+const stationIcon = L.icon({
+    iconUrl: '/img/circle.png',
+    iconSize: [markerSize, markerSize],
+    iconAnchor: [markerSize / 2, markerSize / 2],
+    popupAnchor: [0, -markerSize / 2]
+});
+
+const blinkIcon = L.icon({
     iconUrl: '/img/circle-blink.png',
-    iconSize: [8, 8],
-    iconAnchor: [4, 4],
-    popupAnchor: [4, 0]
+    iconSize: [markerSize, markerSize],
+    iconAnchor: [markerSize / 2, markerSize / 2],
+    popupAnchor: [markerSize / 2, markerSize / 2]
 });
 
 function fetch(url) {
@@ -30,25 +41,37 @@ function fetch(url) {
     });
 }
 
-function makeMapStatic() {
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-}
+function createStationMarkers(stations) {
+    currentIcon = map.getZoom() > overlappingZoom ? stationIcon : blankIcon;
 
-function createStationMarkers(stations, icon) {
     for (let s = 0; s < stations.length; s++) {
-        markers.push(L.marker(stations[s], { icon }));
+        markers.push(L.marker(stations[s], { icon: currentIcon }));
         markers[s].addTo(map);
         markers[s].stationId = stations[s].stationId;
+        markers[s].bindPopup(`${stations[s].stationName}`);
     }
+
+    instantiateDynamicIcons();
+}
+
+function instantiateDynamicIcons() {
+    map.on('zoomend', () => {
+        if (map.getZoom() > overlappingZoom) {
+            currentIcon = stationIcon;
+        } else {
+            currentIcon = blankIcon;
+        }
+
+        markers.forEach((marker) => {
+            marker.setIcon(currentIcon);
+        });
+    });
 }
 
 function drawLines(lines, routes) {
     for (var i = 0; i < routes.length; i++) {
         var lineCount = routes[i].lines.length;
-        var offsetStart = (lineWidth * (lineCount - 1)) / 2;
+        var offsetStart = (lineWidth * (lineCount - 1)) / lineCount;
         for (var j = 0; j < lineCount; j++) {
             var colour = getLineColour(lines, routes[i].lines[j]);
             var pl = L.polyline(
@@ -66,15 +89,16 @@ function drawLines(lines, routes) {
 function createMap() {
     map = L.map('map', {
         center: bounds.getCenter(),
-        maxBounds: bounds,
-        zoom: 11,
-        minZoom: 11,
-        zoomControl: false
+        maxBounds: bounds
     });
+
+    map.fitBounds(bounds);
 
     L.tileLayer('http://{s}.tile.openstreetmap.se/hydda/base/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
+    map.scrollWheelZoom.disable();
 }
 
 function init() {
@@ -99,8 +123,7 @@ function init() {
             drawLines(lines, routes);
         });
     }))
-    .then(initiateSocketListener());
-
+    .then(initiateSocketListener);
 }
 
 function initiateSocketListener() {
@@ -119,10 +142,9 @@ function blinkIconsForArrivals(arrivals) {
             return marker.stationId === arrival.stationId;
         });
 
-        marker.setIcon(blinkIcon);
+        const delay = Math.random() * 500;
 
-        setTimeout(() => {
-            marker.setIcon(stationIcon);
-        }, 1500);
+        setTimeout(() => marker.setIcon(blinkIcon), delay);
+        setTimeout(() => marker.setIcon(currentIcon), delay + 500);
     });
 }
