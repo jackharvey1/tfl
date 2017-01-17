@@ -1,10 +1,9 @@
 {
   "name": "tfl",
   "version": "1.0.0",
-  "main": "api.js",
+  "main": "app.js",
   "dependencies": {
     "console-stamp": "^0.2.4",
-    "cron": "^1.2.1",
     "dustjs-linkedin": "^2.7.5",
     "express": "^4.14.0",
     "lodash": "^4.17.2",

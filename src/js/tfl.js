@@ -20,7 +20,11 @@ module.exports.getAllArrivalsAtAllStations = function() {
                 return station.stationId;
             }).map(module.exports.getAllArrivalsAt)
         ).then((arrivals) => {
-            return removeDuplicatesBy(flatten(arrivals), 'arrivalId');
+            arrivals = removeDuplicatesBy(flatten(arrivals), 'arrivalId');
+
+            console.log(`TFL API responded with ${arrivals.length} arrivals`);
+
+            return arrivals;
         });
     });
 };
@@ -56,7 +60,11 @@ module.exports.getAllStationsOnAllLines = function() {
                 return line.id;
             }).map(module.exports.getAllStationsOnLine)
         ).then((stations) => {
-            return removeDuplicatesBy(flatten(stations), 'stationId');
+            stations = removeDuplicatesBy(flatten(stations), 'stationId');
+
+            console.log(`TFL API responded with ${stations.length} stations`);
+
+            return stations;
         });
     });
 };
@@ -171,7 +179,11 @@ module.exports.makeRequest = function(options) {
             });
 
             response.on('end', () => {
-                resolve(JSON.parse(data));
+                try {
+                    resolve(JSON.parse(data));
+                } catch (e) {
+                    console.log(e);
+                }
             });
         });
     });

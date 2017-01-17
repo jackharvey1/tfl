@@ -5,7 +5,6 @@
 const express = require('express');
 const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
-const CronJob = require('cron').CronJob;
 const path = require('path');
 const fs = require('fs');
 
@@ -97,13 +96,9 @@ server.listen(3000, () => {
         db.saveAllLines().then(() => {
             db.saveAllRoutesOnAllLines().then(() => {
                 db.saveAllStationsOnAllLines().then(() => {
-                    new CronJob('* * * * *', () => {
-                        db.cleanArrivals();
-                    }, null, true, 'UTC', this, true);
+                    setInterval(db.cleanArrivals, 60 * 1000);
 
-                    new CronJob('* * * * *', () => {
-                        db.saveAllArrivalsAtAllStations();
-                    }, null, true, 'UTC', this, true);
+                    setInterval(db.saveAllArrivalsAtAllStations, 20 * 1000);
 
                     setInterval(() => {
                         db.runArrivalCheckJob().then((arrivals) => {

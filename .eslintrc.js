@@ -15,7 +15,7 @@ module.exports = {
         "array-callback-return": "error",
         "arrow-body-style": "off",
         "arrow-parens": [
-            "error",
+            "off",
             "always"
         ],
         "arrow-spacing": [
@@ -87,7 +87,7 @@ module.exports = {
             "error",
             "unix"
         ],
-        "lines-around-comment": "error",
+        "lines-around-comment": "off",
         "lines-around-directive": "error",
         "max-depth": "error",
         "max-len": "off",
@@ -110,7 +110,7 @@ module.exports = {
         "no-catch-shadow": "error",
         "no-confusing-arrow": "error",
         "no-console": "off",
-        "no-continue": "error",
+        "no-continue": "off",
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
         "no-else-return": "off",
@@ -122,7 +122,7 @@ module.exports = {
         "no-extra-label": "error",
         "no-extra-parens": "off",
         "no-floating-decimal": "error",
-        "no-implicit-coercion": "error",
+        "no-implicit-coercion": "off",
         "no-implicit-globals": "error",
         "no-implied-eval": "error",
         "no-inline-comments": "error",
@@ -220,7 +220,7 @@ module.exports = {
         "semi-spacing": "error",
         "sort-imports": "error",
         "sort-keys": "off",
-        "sort-vars": "error",
+        "sort-vars": "off",
         "space-before-blocks": "error",
         "space-before-function-paren": "off",
         "space-in-parens": [
