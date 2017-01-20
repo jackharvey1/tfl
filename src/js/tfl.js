@@ -4,12 +4,20 @@ const https = require('https');
 const flatten = require('lodash/flattenDeep');
 const removeDuplicatesBy = require('lodash/uniqBy');
 const db = require('../db/db');
-const config = require('./../../config/config');
 const detflify = require('../helpers/utils').detflify;
 const cleanStationName = require('../helpers/utils').cleanStationName;
 
-const appId = config.app.id;
-const appKey = config.app.key;
+let appId;
+let appKey;
+
+if (process.env.APP_ID && process.env.APP_KEY) {
+    appId = process.env.APP_ID;
+    appKey = process.env.APP_KEY;
+} else {
+    const config = require('./../../config/config');
+    appId = config.app.id || process.env.APP_ID;
+    appKey = config.app.key || process.env.APP_KEY;
+}
 
 module.exports.getAllArrivalsAtAllStations = function() {
     return db.retrieveAllStationsOnAllLines().then((stations) => {
