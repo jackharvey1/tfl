@@ -5,6 +5,7 @@ const models = require('./models');
 const mongoose = require('mongoose');
 const flatten = require('lodash/flattenDeep');
 const lineColours = require('../resources/line-colours.json');
+const config = require('../../config/db');
 
 const Line = models.Line;
 const Station = models.Station;
@@ -12,7 +13,14 @@ const Route = models.Route;
 const Arrival = models.Arrival;
 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/tfl');
+
+if (process.env.NODE_ENV === 'production') {
+    mongoose.connect(process.env.MONGODB_URI);
+} else {
+    mongoose.connect(config.uri.local);
+}
+
+console.log(config.uri.production);
 
 module.exports.saveAllArrivalsAtAllStations = function() {
     return tfl.getAllArrivalsAtAllStations().then((arrivals) => {

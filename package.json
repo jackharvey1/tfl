@@ -20,6 +20,7 @@
     "sinon-chai": "^2.8.0"
   },
   "scripts": {
+    "start": "node app.js",
     "watch": "nodemon app.js",
     "test": "mocha --recursive --timeout 3000 || true"
   },

@@ -72,7 +72,7 @@ module.exports = {
         "id-length": "off",
         "id-match": "error",
         "indent": "error",
-        "init-declarations": "error",
+        "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "error",
         "keyword-spacing": [
