@@ -14,9 +14,15 @@ if (process.env.APP_ID && process.env.APP_KEY) {
     appId = process.env.APP_ID;
     appKey = process.env.APP_KEY;
 } else {
-    const config = require('./../../config/config');
-    appId = config.app.id || process.env.APP_ID;
-    appKey = config.app.key || process.env.APP_KEY;
+    try {
+        const config = require('./../../config/config');
+        appId = config.app.id;
+        appKey = config.app.key;
+    } catch (err) {
+        console.info('App id and key not supplied. Using empty app id and key');
+        appId = '';
+        appKey = '';
+    }
 }
 
 module.exports.getAllArrivalsAtAllStations = function() {
