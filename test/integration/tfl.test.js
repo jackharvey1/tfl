@@ -132,17 +132,17 @@ describe('TfL calls', function() {
                     {
                         arrivalId: '352100931',
                         expectedArrival: '2016-12-17T18:36:52.7022069Z',
-                        stationName: 'Oxford Circus',
+                        stationId: '940GZZLUOXC',
                         vehicleId: '203'
                     }, {
                         arrivalId: '1015497106',
                         expectedArrival: '2016-12-17T18:35:52.7022069Z',
-                        stationName: 'Oxford Circus',
+                        stationId: '940GZZLUOXC',
                         vehicleId: '210'
                     }, {
                         arrivalId: '2002081508',
                         expectedArrival: '2016-12-17T18:42:51.7332069Z',
-                        stationName: 'Oxford Circus',
+                        stationId: '940GZZLUOXC',
                         vehicleId: '222'
                     }
                 ]);
