@@ -1,6 +1,6 @@
 /* global sandbox, expect */
 const tfl = require('../../src/js/tfl');
-const db = require('../../src/db/db');
+const retrieve = require('../../src/db/retrieve');
 
 const lines = require('../resources/lines.json');
 const stationsOnVictoria = require('../resources/stations-on-victoria.json');
@@ -66,7 +66,7 @@ describe('TfL calls', function() {
         });
 
         it('should make the call for all stations correctly', function() {
-            sandbox.stub(db, 'retrieveAllLines', function() {
+            sandbox.stub(retrieve, 'allLines', function() {
                 return Promise.resolve([
                     {
                         name: 'Victoria',
@@ -132,16 +132,19 @@ describe('TfL calls', function() {
                     {
                         arrivalId: '352100931',
                         expectedArrival: '2016-12-17T18:36:52.7022069Z',
+                        stationName: 'Oxford Circus',
                         stationId: '940GZZLUOXC',
                         vehicleId: '203'
                     }, {
                         arrivalId: '1015497106',
                         expectedArrival: '2016-12-17T18:35:52.7022069Z',
+                        stationName: 'Oxford Circus',
                         stationId: '940GZZLUOXC',
                         vehicleId: '210'
                     }, {
                         arrivalId: '2002081508',
                         expectedArrival: '2016-12-17T18:42:51.7332069Z',
+                        stationName: 'Oxford Circus',
                         stationId: '940GZZLUOXC',
                         vehicleId: '222'
                     }
@@ -150,7 +153,7 @@ describe('TfL calls', function() {
         });
 
         it('should make the call for arrivals at all stations correctly', function() {
-            sandbox.stub(db, 'retrieveAllStationsOnAllLines', function() {
+            sandbox.stub(retrieve, 'allStationsOnAllLines', function() {
                 return Promise.resolve([
                     {
                         stationName: `King's Cross`,
