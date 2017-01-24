@@ -3,7 +3,7 @@
 const https = require('https');
 const flatten = require('lodash/flattenDeep');
 const removeDuplicatesBy = require('lodash/uniqBy');
-const db = require('../db/db');
+const retrieve = require('../db/retrieve');
 const detflify = require('../helpers/utils').detflify;
 const cleanStationName = require('../helpers/utils').cleanStationName;
 
@@ -26,7 +26,7 @@ if (process.env.APP_ID && process.env.APP_KEY) {
 }
 
 module.exports.getAllArrivalsAtAllStations = function() {
-    return db.retrieveAllStationsOnAllLines().then((stations) => {
+    return retrieve.allStationsOnAllLines().then((stations) => {
         console.info(`Getting all arrivals at all stations`);
 
         return Promise.all(
@@ -57,7 +57,7 @@ module.exports.getAllArrivalsAt = function(stationId) {
                 arrivals.push({
                     arrivalId: datum.id,
                     vehicleId: datum.vehicleId,
-                    stationId: datum.stationId,
+                    stationId: datum.naptanId,
                     expectedArrival: datum.expectedArrival
                 });
             });
@@ -67,7 +67,7 @@ module.exports.getAllArrivalsAt = function(stationId) {
 };
 
 module.exports.getAllStationsOnAllLines = function() {
-    return db.retrieveAllLines().then((lines) => {
+    return retrieve.allLines().then((lines) => {
         console.info(`Retrieving all stations on all lines`);
         return Promise.all(
             lines.map((line) => {
@@ -126,7 +126,7 @@ module.exports.getAllRoutesOnAllLines = function() {
         host: 'api.tfl.gov.uk'
     };
 
-    return db.retrieveAllLines().then((lines) => {
+    return retrieve.allLines().then((lines) => {
         return Promise.all(
             lines.map((line) => {
                 return line.id;

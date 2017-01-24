@@ -8,7 +8,10 @@ const morgan = require('morgan');
 const path = require('path');
 const fs = require('fs');
 
-const db = require('./src/db/db');
+const db = require('./src/db/init');
+const save = require('./src/db/save');
+const retrieve = require('./src/db/retrieve');
+const utils = require('./src/db/utils');
 const merge = require('./src/helpers/utils').mergeObjectArray;
 const max = require('./src/helpers/db').max;
 const min = require('./src/helpers/db').min;
@@ -54,12 +57,12 @@ app.get('/bounds', (req, res) => {
 
 app.get('/stations/:line', (req, res) => {
     if (req.params.line === 'all') {
-        db.retrieveAllStationsOnAllLines().then((stations) => {
+        retrieve.allStationsOnAllLines().then((stations) => {
             res.json(stations);
             res.end();
         });
     } else {
-        db.retrieveAllStationsOnLine(req.params.line).then((stations) => {
+        retrieve.allStationsOnLine(req.params.line).then((stations) => {
             res.json(stations);
             res.end();
         });
@@ -67,14 +70,14 @@ app.get('/stations/:line', (req, res) => {
 });
 
 app.get('/lines', (req, res) => {
-    db.retrieveAllLines().then((lines) => {
+    retrieve.allLines().then((lines) => {
         res.json(lines);
         res.end();
     });
 });
 
 app.get('/routes', (req, res) => {
-    db.retrieveAllRoutesOnAllLines().then((routes) => {
+    retrieve.allRoutesOnAllLines().then((routes) => {
         res.json(bunch(routes));
         res.end();
     });
@@ -82,27 +85,28 @@ app.get('/routes', (req, res) => {
 
 server.listen(process.env.PORT || 3000, () => {
     console.log('Listening on port 3000');
+    db();
 
     if (process.env.NODE_ENV === 'clean') {
-        db.clearDatabase().then(() => {
+        utils.clearDatabase().then(() => {
             process.exit(0);
         });
     } else if (process.env.NODE_ENV === 'quiet') {
-        db.saveAllLines().then(() => {
-            db.saveAllStationsOnAllLines().then(() => {
-                db.saveAllRoutesOnAllLines();
+        save.allLines().then(() => {
+            save.allStationsOnAllLines().then(() => {
+                save.allRoutesOnAllLines();
             });
         });
     } else {
-        db.saveAllLines().then(() => {
-            db.saveAllRoutesOnAllLines().then(() => {
-                db.saveAllStationsOnAllLines().then(() => {
-                    setInterval(db.cleanArrivals, 60 * 1000);
+        save.allLines().then(() => {
+            save.allRoutesOnAllLines().then(() => {
+                save.allStationsOnAllLines().then(() => {
+                    setInterval(utils.cleanArrivals, 60 * 1000);
 
-                    setInterval(db.saveAllArrivalsAtAllStations, 20 * 1000);
+                    setInterval(save.allArrivalsAtAllStations, 20 * 1000);
 
                     setInterval(() => {
-                        db.runArrivalCheckJob().then((arrivals) => {
+                        utils.runArrivalCheckJob().then((arrivals) => {
                             io.emit('arrivals', arrivals);
                         });
                     }, 1000);
