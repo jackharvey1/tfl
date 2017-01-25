@@ -1,6 +1,6 @@
 /* global sandbox, expect */
 const tfl = require('../../src/js/tfl');
-const db = require('../../src/db/db');
+const retrieve = require('../../src/db/retrieve');
 
 const lines = require('../resources/lines.json');
 const stationsOnVictoria = require('../resources/stations-on-victoria.json');
@@ -66,7 +66,7 @@ describe('TfL calls', function() {
         });
 
         it('should make the call for all stations correctly', function() {
-            sandbox.stub(db, 'retrieveAllLines', function() {
+            sandbox.stub(retrieve, 'allLines', function() {
                 return Promise.resolve([
                     {
                         name: 'Victoria',
@@ -150,7 +150,7 @@ describe('TfL calls', function() {
         });
 
         it('should make the call for arrivals at all stations correctly', function() {
-            sandbox.stub(db, 'retrieveAllStationsOnAllLines', function() {
+            sandbox.stub(retrieve, 'allStationsOnAllLines', function() {
                 return Promise.resolve([
                     {
                         stationName: `King's Cross`,
