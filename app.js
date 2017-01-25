@@ -107,9 +107,15 @@ server.listen(process.env.PORT || 3000, () => {
 
                     setInterval(() => {
                         utils.runArrivalCheckJob().then((arrivals) => {
-                            io.emit('arrivals', arrivals);
+                            io.emit('arrivalsNow', arrivals);
                         });
                     }, 1000);
+
+                    setInterval(() => {
+                        utils.getNextArrivalsAtAllStations().then((arrivals) => {
+                            io.emit('stationArrivals', arrivals);
+                        });
+                    }, 15 * 1000);
                 });
             });
         });

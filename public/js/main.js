@@ -48,7 +48,8 @@ function createStationMarkers(stations) {
         markers.push(L.marker(stations[s], { icon: currentIcon }));
         markers[s].addTo(map);
         markers[s].stationId = stations[s].stationId;
-        markers[s].bindPopup(`${stations[s].stationName}`);
+        markers[s].stationName = stations[s].stationName;
+        markers[s].bindPopup(`${markers[s].stationName}`);
     }
 
     instantiateDynamicIcons();
@@ -129,10 +130,30 @@ function init() {
 function initiateSocketListener() {
     socket = io();
 
-    socket.on('arrivals', function (arrivals) {
+    socket.on('arrivalsNow', (arrivals) => {
         if (arrivals.length > 0) {
             blinkIconsForArrivals(arrivals);
         }
+    });
+
+    socket.on('stationArrivals', (arrivals) => {
+        updateStationPopups(arrivals);
+    });
+}
+
+function updateStationPopups(arrivals) {
+    arrivals.forEach((arrival) => {
+        const marker = markers.find((marker) => {
+            return marker.stationId === arrival.stationId;
+        });
+
+        let time = arrival.time;
+        if (time !== 'N/A') {
+            time = new Date(arrival.time);
+            time = time.toLocaleTimeString();
+        }
+
+        marker._popup.setContent(`Station: ${arrival.stationName}<br />Next arrival: ${time}`);
     });
 }
 

@@ -1,5 +1,6 @@
 const models = require('./models');
 const flatten = require('lodash/flattenDeep');
+const retrieve = require('./retrieve');
 
 const Line = models.Line;
 const Station = models.Station;
@@ -57,6 +58,41 @@ module.exports.runArrivalCheckJob = function() {
             expectedArrival: { $eq: now }
         }, (err, arrivals) => {
             resolve(arrivals);
+        });
+    });
+};
+
+module.exports.getNextArrivalsAtAllStations = function() {
+    const now = new Date();
+
+    return retrieve.allStationsOnAllLines().then((stations) => {
+        return Promise.all(stations.map((station) => {
+            return new Promise((resolve) => {
+                Arrival.findOne({
+                    stationId: station.stationId,
+                    expectedArrival: {
+                        $gt: now
+                    }
+                })
+                .sort(`expectedArrival`)
+                .exec((err, item) => {
+                    if (item) {
+                        resolve({
+                            stationId: station.stationId,
+                            stationName: station.stationName,
+                            time: item.expectedArrival
+                        });
+                    } else {
+                        resolve({
+                            stationId: station.stationId,
+                            stationName: station.stationName,
+                            time: 'N/A'
+                        });
+                    }
+                });
+            });
+        })).then((nextArrivals) => {
+            return flatten(nextArrivals);
         });
     });
 };
