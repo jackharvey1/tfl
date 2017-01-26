@@ -153,7 +153,7 @@ function updateStationPopups(arrivals) {
             time = time.toLocaleTimeString();
         }
 
-        marker._popup.setContent(`Station: ${arrival.stationName}<br />Next arrival: ${time}`);
+        marker._popup.setContent(`Station: ${marker.stationName}<br />Next arrival: ${time}`);
     });
 }
 
@@ -164,6 +164,8 @@ function blinkIconsForArrivals(arrivals) {
         });
 
         const delay = Math.random() * 500;
+
+        marker._popup.setContent(`Station: ${marker.stationName}<br />Next arrival: N/A`);
 
         setTimeout(() => marker.setIcon(blinkIcon), delay);
         setTimeout(() => marker.setIcon(currentIcon), delay + 500);

@@ -31,6 +31,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', () => {
     console.log('User connected');
+
+    utils.getNextArrivalsAtAllStations().then((arrivals) => {
+        io.emit('stationArrivals', arrivals);
+    });
 });
 
 app.get('/', (req, res) => {
