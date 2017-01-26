@@ -86,6 +86,10 @@ module.exports.getNextArrivalsAtAllStations = function() {
                 };
             });
         }).then((nextArrivals) => {
+            const numberFound = flatten(nextArrivals).filter(x => x.time !== 'N/A').length;
+
+            console.log(`Found arrivals for ${numberFound} / ${stations.length} stations`);
+
             return flatten(nextArrivals);
         });
     });

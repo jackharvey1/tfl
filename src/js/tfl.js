@@ -1,5 +1,6 @@
 'use strict';
 
+const bluebird = require('bluebird');
 const https = require('https');
 const flatten = require('lodash/flattenDeep');
 const removeDuplicatesBy = require('lodash/uniqBy');
@@ -29,11 +30,9 @@ module.exports.getAllArrivalsAtAllStations = function() {
     return retrieve.allStationsOnAllLines().then((stations) => {
         console.info(`Getting all arrivals at all stations`);
 
-        return Promise.all(
-            stations.map((station) => {
-                return station.stationId;
-            }).map(module.exports.getAllArrivalsAt)
-        ).then((arrivals) => {
+        return bluebird.map(stations, (station) => {
+            return module.exports.getAllArrivalsAt(station.stationId);
+        }).then((arrivals) => {
             arrivals = removeDuplicatesBy(flatten(arrivals), 'arrivalId');
 
             console.log(`TFL API responded with ${arrivals.length} arrivals`);
@@ -69,11 +68,9 @@ module.exports.getAllArrivalsAt = function(stationId) {
 module.exports.getAllStationsOnAllLines = function() {
     return retrieve.allLines().then((lines) => {
         console.info(`Retrieving all stations on all lines`);
-        return Promise.all(
-            lines.map((line) => {
-                return line.id;
-            }).map(module.exports.getAllStationsOnLine)
-        ).then((stations) => {
+        return bluebird.map(lines, (line) => {
+            return module.exports.getAllStationsOnLine(line.id);
+        }).then((stations) => {
             stations = removeDuplicatesBy(flatten(stations), 'stationId');
 
             console.log(`TFL API responded with ${stations.length} stations`);
@@ -127,32 +124,28 @@ module.exports.getAllRoutesOnAllLines = function() {
     };
 
     return retrieve.allLines().then((lines) => {
-        return Promise.all(
-            lines.map((line) => {
-                return line.id;
-            }).map((line) => {
-                options.path = `/Line/${line}/Route/Sequence/outbound?excludeCrowding=false&serviceTypes=regular,night&app_key=${appKey}&app_id=${appId}`;
-                return module.exports.makeRequest(options).then((data) => {
-                    const routeStrs = data.lineStrings;
-                    const routesArr = [];
-                    routesArr.push({ line });
-                    for (let r = 0; r < routeStrs.length; r++) {
-                        const routeArr = [];
-                        const routes = routeStrs[r].replace(/(\[|])/g, '').split(',');
-                        for (let s = 0; s < routes.length; s += 2) {
-                            routeArr.push(
-                                {
-                                    lon: routes[s],
-                                    lat: routes[s + 1]
-                                }
-                            );
-                        }
-                        routesArr.push(routeArr);
+        return bluebird.map(lines, (line) => {
+            options.path = `/Line/${line.id}/Route/Sequence/outbound?excludeCrowding=false&serviceTypes=regular,night&app_key=${appKey}&app_id=${appId}`;
+            return module.exports.makeRequest(options).then((data) => {
+                const routeStrs = data.lineStrings;
+                const routesArr = [];
+                routesArr.push({ line: line.id });
+                for (let r = 0; r < routeStrs.length; r++) {
+                    const routeArr = [];
+                    const routes = routeStrs[r].replace(/(\[|])/g, '').split(',');
+                    for (let s = 0; s < routes.length; s += 2) {
+                        routeArr.push(
+                            {
+                                lon: routes[s],
+                                lat: routes[s + 1]
+                            }
+                        );
                     }
-                    return routesArr;
-                });
-            })
-        ).then((routes) => {
+                    routesArr.push(routeArr);
+                }
+                return routesArr;
+            });
+        }).then((routes) => {
             return routes;
         });
     });
