@@ -1,3 +1,4 @@
+const bluebird = require('bluebird');
 const models = require('./models');
 const flatten = require('lodash/flattenDeep');
 const retrieve = require('./retrieve');
@@ -24,28 +25,29 @@ module.exports.clearDatabase = function() {
         }
     ];
 
-    return Promise.all(models.map((model) => {
-        return new Promise((resolve) => {
-            model.name.remove({}, (err, obj) => {
-                resolve({
+    return bluebird.map(models, (model) => {
+        return model.name.remove({})
+            .then((obj) => {
+                return {
                     model: model.string,
                     count: obj.result.n
-                });
+                };
             });
-        });
-    })).then((removals) => {
+    }).then((removals) => {
         removals.forEach((removal) => {
             console.log(`Removed ${removal.count} ${removal.model}`);
         });
+    }).catch((e) => {
+        throw e;
     });
 };
 
 module.exports.cleanArrivals = function() {
     const now = new Date();
 
-    Arrival.remove({
+    return Arrival.remove({
         expectedArrival: {$lt: now}
-    }, (err, obj) => {
+    }).then((obj) => {
         console.log(`Cleaned up ${obj.result.n} arrival entries`);
     });
 };
@@ -53,39 +55,37 @@ module.exports.cleanArrivals = function() {
 module.exports.runArrivalCheckJob = function() {
     const now = new Date().setMilliseconds(0);
 
-    return new Promise((resolve) => {
-        Arrival.find({
-            expectedArrival: { $eq: now }
-        }, (err, arrivals) => {
-            resolve(arrivals);
-        });
+    return Arrival.find({
+        expectedArrival: { $eq: now }
+    }).then((arrivals) => {
+        return arrivals;
     });
 };
 
 module.exports.getNextArrivalsAtAllStations = function() {
+    console.info('Getting next arrivals for all stations');
     const now = new Date();
 
     return retrieve.allStationsOnAllLines().then((stations) => {
-        return Promise.all(stations.map((station) => {
-            return new Promise((resolve) => {
-                Arrival.findOne({
-                    stationId: station.stationId,
-                    expectedArrival: {
-                        $gt: now
-                    }
-                })
-                .sort(`expectedArrival`)
-                .exec((err, item) => {
-                    const time = item ? item.expectedArrival : 'N/A';
+        return bluebird.map(stations, (station) => {
+            return Arrival.findOne({
+                stationId: station.stationId,
+                expectedArrival: {
+                    $gt: now
+                }
+            })
+            .sort(`expectedArrival`)
+            .exec()
+            .then((item) => {
+                const time = item ? item.expectedArrival : 'N/A';
 
-                    resolve({
-                        stationId: station.stationId,
-                        stationName: station.stationName,
-                        time
-                    });
-                });
+                return {
+                    stationId: station.stationId,
+                    stationName: station.stationName,
+                    time
+                };
             });
-        })).then((nextArrivals) => {
+        }).then((nextArrivals) => {
             return flatten(nextArrivals);
         });
     });
