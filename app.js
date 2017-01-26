@@ -107,7 +107,7 @@ server.listen(process.env.PORT || 3000, () => {
                 save.allStationsOnAllLines().then(() => {
                     setInterval(utils.cleanArrivals, 60 * 1000);
 
-                    setInterval(save.allArrivalsAtAllStations, 20 * 1000);
+                    setInterval(save.allArrivalsAtAllStations, 30 * 1000);
 
                     setInterval(() => {
                         utils.runArrivalCheckJob().then((arrivals) => {
