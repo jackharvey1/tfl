@@ -76,19 +76,13 @@ module.exports.getNextArrivalsAtAllStations = function() {
                 })
                 .sort(`expectedArrival`)
                 .exec((err, item) => {
-                    if (item) {
-                        resolve({
-                            stationId: station.stationId,
-                            stationName: station.stationName,
-                            time: item.expectedArrival
-                        });
-                    } else {
-                        resolve({
-                            stationId: station.stationId,
-                            stationName: station.stationName,
-                            time: 'N/A'
-                        });
-                    }
+                    const time = item ? item.expectedArrival : 'N/A';
+
+                    resolve({
+                        stationId: station.stationId,
+                        stationName: station.stationName,
+                        time
+                    });
                 });
             });
         })).then((nextArrivals) => {
