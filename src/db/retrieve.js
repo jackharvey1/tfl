@@ -25,12 +25,11 @@ module.exports.allLines = function() {
 };
 
 function retrieve(model, query = {}) {
-    return new Promise((resolve, reject) => {
-        model.find(query, (err, result) => {
-            if (err) {
-                reject(err);
-            }
-            resolve(result);
+    return model.find(query)
+        .then((result) => {
+            return result;
+        })
+        .catch((e) => {
+            throw e;
         });
-    });
 }

@@ -1,3 +1,4 @@
+const bluebird = require('bluebird');
 const tfl = require('../js/tfl');
 const models = require('./models');
 const parseSaveResults = require('./utils').parseSaveResults;
@@ -10,35 +11,28 @@ const Arrival = models.Arrival;
 
 module.exports.allArrivalsAtAllStations = function() {
     return tfl.getAllArrivalsAtAllStations().then((arrivals) => {
-        return Promise.all(
-            arrivals.map((arrival) => {
-                return new Promise((resolve) => {
-                    Arrival.count({ arrivalId: arrival.arrivalId }, (err, count) => {
-                        if (count > 0) {
-                            resolve(null);
-                        } else {
-                            const expected = new Date(arrival.expectedArrival);
-                            expected.setMilliseconds(0);
+        return bluebird.map(arrivals, (arrival) => {
+            return Arrival.count({ arrivalId: arrival.arrivalId })
+                .then((count) => {
+                    if (count > 0) {
+                        return null;
+                    } else {
+                        const expected = new Date(arrival.expectedArrival);
+                        expected.setMilliseconds(0);
 
-                            const arrivalEntry = new Arrival({
-                                arrivalId: arrival.arrivalId,
-                                vehicleId: arrival.vehicleId,
-                                stationId: arrival.stationId,
-                                expectedArrival: expected
-                            });
+                        const arrivalEntry = new Arrival({
+                            arrivalId: arrival.arrivalId,
+                            vehicleId: arrival.vehicleId,
+                            stationId: arrival.stationId,
+                            expectedArrival: expected
+                        });
 
-                            arrivalEntry.save((err) => {
-                                if (err) {
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            });
-                        }
-                    });
+                        return arrivalEntry.save()
+                            .then(() => true)
+                            .catch(() => false);
+                    }
                 });
-            })
-        ).then((arrivals) => {
+        }).then((arrivals) => {
             const results = parseSaveResults(arrivals);
 
             console.log(`Arrivals: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
@@ -48,76 +42,61 @@ module.exports.allArrivalsAtAllStations = function() {
 
 module.exports.allRoutesOnAllLines = function() {
     return tfl.getAllRoutesOnAllLines().then((paths) => {
-        return Route.remove(() => {
-            return Promise.resolve();
-        }).then(() => {
-            return Promise.all(
-                paths.map((pathGroup) => {
-                    return new Promise((resolve) => {
-                        const currRoute = {
-                            line: pathGroup[0].line,
-                            pointGroups: []
-                        };
+        return Route.remove({})
+            .then(() => {
+                return bluebird.map(paths, (pathGroup) => {
+                    const currRoute = {
+                        line: pathGroup[0].line,
+                        pointGroups: []
+                    };
 
-                        for (let j = 1; j < pathGroup.length; j++) {
-                            currRoute.pointGroups.push([]);
-                            for (let k = 0; k < pathGroup[j].length; k++) {
-                                currRoute.pointGroups[j - 1].push({
-                                    lat: pathGroup[j][k].lat,
-                                    lon: pathGroup[j][k].lon
-                                });
-                            }
+                    for (let j = 1; j < pathGroup.length; j++) {
+                        currRoute.pointGroups.push([]);
+                        for (let k = 0; k < pathGroup[j].length; k++) {
+                            currRoute.pointGroups[j - 1].push({
+                                lat: pathGroup[j][k].lat,
+                                lon: pathGroup[j][k].lon
+                            });
                         }
+                    }
 
-                        const routeEntry = new Route(currRoute);
+                    const routeEntry = new Route(currRoute);
 
-                        routeEntry.save((err) => {
-                            if (err) {
-                                resolve(false);
-                            } else {
-                                resolve(true);
-                            }
-                        });
-                    });
-                })
-            ).then((parsedPaths) => {
-                const results = parseSaveResults(parsedPaths);
+                    return routeEntry.save()
+                        .then(() => true)
+                        .catch(() => false);
+                });
+            })
+        .then((parsedPaths) => {
+            const results = parseSaveResults(parsedPaths);
 
-                console.log(`Route groups: ${results.saved} saved and ${results.errored} errored`);
-            });
+            console.log(`Route groups: ${results.saved} saved and ${results.errored} errored`);
         });
     });
 };
 
 module.exports.allStationsOnAllLines = function() {
     return tfl.getAllStationsOnAllLines().then((stations) => {
-        return Promise.all(
-            stations.map((station) => {
-                return new Promise((resolve) => {
-                    Station.count({ stationId: station.stationId }, (err, count) => {
-                        if (count > 0) {
-                            resolve(null);
-                        } else {
-                            const stationEntry = new Station({
-                                stationName: station.stationName,
-                                stationId: station.stationId,
-                                lines: station.lines,
-                                lat: station.lat,
-                                lon: station.lon
-                            });
-
-                            stationEntry.save((err) => {
-                                if (err) {
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            });
-                        }
+        return bluebird.map(stations, (station) => {
+            return Station.count({ stationId: station.stationId }).then((count) => {
+                if (count > 0) {
+                    return null;
+                } else {
+                    const stationEntry = new Station({
+                        stationName: station.stationName,
+                        stationId: station.stationId,
+                        lines: station.lines,
+                        lat: station.lat,
+                        lon: station.lon
                     });
-                });
-            })
-        ).then((stations) => {
+
+                    stationEntry.save()
+                        .then(() => true)
+                        .catch(() => false);
+                }
+            });
+        })
+        .then((stations) => {
             const results = parseSaveResults(stations);
 
             console.log(`Stations: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
@@ -127,31 +106,23 @@ module.exports.allStationsOnAllLines = function() {
 
 module.exports.allLines = function() {
     return tfl.getAllLines().then((lines) => {
-        return Promise.all(
-            lines.map((line) => {
-                return new Promise((resolve) => {
-                    Line.count({ id: line.id }, (err, count) => {
-                        if (count > 0) {
-                            resolve(null);
-                        } else {
-                            const lineEntry = new Line({
-                                name: line.name,
-                                id: line.id,
-                                colour: lineColours[line.id]
-                            });
-
-                            lineEntry.save((err) => {
-                                if (err) {
-                                    resolve(false);
-                                } else {
-                                    resolve(true);
-                                }
-                            });
-                        }
+        return bluebird.map(lines, (line) => {
+            return Line.count({ id: line.id }).then((count) => {
+                if (count > 0) {
+                    return null;
+                } else {
+                    const lineEntry = new Line({
+                        name: line.name,
+                        id: line.id,
+                        colour: lineColours[line.id]
                     });
-                });
-            })
-        ).then((lines) => {
+
+                    return lineEntry.save()
+                        .then(() => true)
+                        .catch(() => false);
+                }
+            });
+        }).then((lines) => {
             const results = parseSaveResults(lines);
 
             console.log(`Lines: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
