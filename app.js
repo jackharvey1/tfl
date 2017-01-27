@@ -3,6 +3,7 @@
 'use strict';
 
 const express = require('express');
+const bluebird = require('bluebird');
 const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
 const path = require('path');
@@ -12,7 +13,6 @@ const db = require('./src/db/init');
 const save = require('./src/db/save');
 const retrieve = require('./src/db/retrieve');
 const utils = require('./src/db/utils');
-const merge = require('./src/helpers/utils').mergeObjectArray;
 const max = require('./src/helpers/db').max;
 const min = require('./src/helpers/db').min;
 const models = require('./src/db/models');
@@ -49,13 +49,21 @@ app.get('/', (req, res) => {
 });
 
 app.get('/bounds', (req, res) => {
-    Promise.all([
+    bluebird.all([
         max(Station, 'lat'),
         min(Station, 'lat'),
         max(Station, 'lon'),
         min(Station, 'lon')
-    ]).then((obj) => {
-        res.send(merge(obj));
+    ]).spread((maxLat, minLat, maxLon, minLon) => {
+        res.send({
+            lat: {
+                max: maxLat.lat.max,
+                min: minLat.lat.min
+            }, lon: {
+                max: maxLon.lon.max,
+                min: minLon.lon.min
+            }
+        });
     });
 });
 
@@ -107,7 +115,7 @@ server.listen(process.env.PORT || 3000, () => {
                 save.allStationsOnAllLines().then(() => {
                     setInterval(utils.cleanArrivals, 60 * 1000);
 
-                    setInterval(save.allArrivalsAtAllStations, 20 * 1000);
+                    setInterval(save.allArrivalsAtAllStations, 30 * 1000);
 
                     setInterval(() => {
                         utils.runArrivalCheckJob().then((arrivals) => {

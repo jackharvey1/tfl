@@ -1,38 +1,11 @@
 'use strict';
 
-const unique = require('lodash/uniq');
-const flatten = require('lodash/flatten');
-const assign = require('lodash/assign');
-
 module.exports.detflify = function(str) {
     return str.replace('-', ' & ').replace(/(^\w|\s\w)/g, (letter) => letter.toUpperCase());
 };
 
 module.exports.cleanStationName = function(str) {
     return str.replace(' Underground Station', '');
-};
-
-module.exports.mergeObjectArray = function(arr) {
-    const merged = {};
-    let keys = [];
-
-    arr.forEach((element) => {
-        const key = Object.keys(element);
-        keys.push(key);
-        merged[key] = {};
-    });
-
-    keys = unique(flatten(keys));
-
-    arr.forEach((element) => {
-        keys.forEach((key) => {
-            if (key in element) {
-                assign(merged[key], element[key]);
-            }
-        });
-    });
-
-    return merged;
 };
 
 /* eslint max-statements:off */
