@@ -7,9 +7,12 @@
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-easybutton@2.0.0/src/easy-button.css" />
+
         <link rel="stylesheet" href="/styles/main.css" />
 
         <script src="/js/leaflet-offset.min.js"></script>
+        <script src="https://unpkg.com/leaflet-easybutton@2.0.0/src/easy-button.js"></script>
         <script src="/js/main.js"></script>
         <script src="/js/utils.js"></script>
     </head>

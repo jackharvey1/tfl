@@ -1,11 +1,16 @@
 'use strict';
 
 module.exports.detflify = function(str) {
-    return str.replace('-', ' & ').replace(/(^\w|\s\w)/g, (letter) => letter.toUpperCase());
+    return str
+        .replace('-', ' & ')
+        .replace(/(^\w|\s\w)/g, (letter) => letter.toUpperCase());
 };
 
 module.exports.cleanStationName = function(str) {
-    return str.replace(' Underground Station', '');
+    return str
+        .replace(' Underground Station', '')
+        .replace(' DLR Station', '')
+        .replace(' Rail Station', '');
 };
 
 /* eslint max-statements:off */

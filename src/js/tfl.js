@@ -154,7 +154,7 @@ module.exports.getAllRoutesOnAllLines = function() {
 module.exports.getAllLines = function() {
     const options = {
         host: 'api.tfl.gov.uk',
-        path: `/Line/Mode/tube/Route?app_id=${appId}&app_key=${appKey}`
+        path: `/Line/Mode/tube?app_id=${appId}&app_key=${appKey}`
     };
 
     console.info('Retrieving all lines');
