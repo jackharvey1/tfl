@@ -1,3 +1,5 @@
+'use strict';
+
 const bluebird = require('bluebird');
 const tfl = require('../js/tfl');
 const models = require('./models');

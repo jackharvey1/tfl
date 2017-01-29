@@ -1,3 +1,5 @@
+'use strict';
+
 const models = require('./models');
 const Line = models.Line;
 const Station = models.Station;

@@ -1,3 +1,5 @@
+'use strict';
+
 const bluebird = require('bluebird');
 const models = require('./models');
 const flatten = require('lodash/flattenDeep');
