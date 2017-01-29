@@ -30,7 +30,7 @@ const blinkIcon = L.icon({
     iconUrl: '/img/circle-blink.png',
     iconSize: [markerSize, markerSize],
     iconAnchor: [markerSize / 2, markerSize / 2],
-    popupAnchor: [markerSize / 2, markerSize / 2]
+    popupAnchor: [0, -markerSize / 2]
 });
 
 function fetch(url) {
