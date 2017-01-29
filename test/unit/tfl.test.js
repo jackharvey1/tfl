@@ -115,6 +115,32 @@ describe('TfL calls', function() {
                 ]);
             });
         });
+
+        it('should not return duplicate stations', function() {
+            sandbox.stub(retrieve, 'allLines', function() {
+                return Promise.resolve([{
+                    id: 1
+                }, {
+                    id: 2
+                }]);
+            });
+
+            sandbox.stub(tfl, 'getAllStationsOnLine', function() {
+                return Promise.resolve([{
+                    stationId: 1
+                }, {
+                    stationId: 1
+                }]);
+            });
+
+            return tfl.getAllStationsOnAllLines().then((stations) => {
+                return expect(stations).to.deep.equal([
+                    {
+                        stationId: 1
+                    }
+                ]);
+            });
+        });
     });
 
     describe('for arrivals', function() {

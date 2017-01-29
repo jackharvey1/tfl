@@ -107,25 +107,37 @@ module.exports.allStationsOnAllLines = function() {
 module.exports.allLines = function() {
     return tfl.getAllLines().then((lines) => {
         return bluebird.map(lines, (line) => {
+            console.log('dis');
             return Line.count({ id: line.id }).then((count) => {
+                console.log(count);
                 if (count > 0) {
                     return null;
                 } else {
+                    console.log('1');
                     const lineEntry = new Line({
                         name: line.name,
                         id: line.id,
                         colour: lineColours[line.id]
                     });
+                    console.log('2');
+
+                    console.log(lineEntry);
+                    console.log(lineEntry.save);
 
                     return lineEntry.save()
-                        .then(() => true)
+                        .then(() => {
+                            console.log('true');
+                            return true;
+                        })
                         .catch(() => false);
                 }
             });
         }).then((lines) => {
+            console.log('3');
             const results = parseSaveResults(lines);
 
             console.log(`Lines: ${results.saved} saved, ${results.errored} errored and ${results.skipped} already saved`);
+            return Promise.resolve();
         });
     });
 };
