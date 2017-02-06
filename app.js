@@ -82,7 +82,6 @@ app.get('/stations/:line', (req, res) => {
 });
 
 app.get('/lines', (req, res) => {
-    console.log(req.query.overground);
     retrieve.allLines().then((lines) => {
         res.json(lines);
         res.end();

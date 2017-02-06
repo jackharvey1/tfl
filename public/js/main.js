@@ -102,7 +102,7 @@ function createMap() {
     map.scrollWheelZoom.disable();
 }
 
-function init() {
+window.onload = function() {
     fetch('/bounds').then((stats) => {
         bounds = new L.LatLngBounds([
             [stats.lat.max + 0.01, stats.lon.max + 0.01],
@@ -125,7 +125,7 @@ function init() {
         });
     }))
     .then(initiateSocketListener);
-}
+};
 
 function initiateSocketListener() {
     socket = io();
@@ -156,6 +156,15 @@ function updateStationPopups(arrivals) {
         marker._popup.setContent(`Station: ${marker.stationName}<br />Next arrival: ${time}`);
     });
 }
+
+function getLineColour(lines, line) {
+    for (var l = 0; l < lines.length; l++) {
+        if (lines[l].id === line) {
+            return lines[l].colour;
+        }
+    }
+}
+
 
 function blinkIconsForArrivals(arrivals) {
     arrivals.forEach((arrival) => {
