@@ -9,9 +9,7 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
         <link rel="stylesheet" href="/styles/main.css" />
 
-        <script src="/js/leaflet-offset.min.js"></script>
-        <script src="/js/main.js"></script>
-        <script src="/js/utils.js"></script>
+        <script src="/js/main.min.js"></script>
     </head>
     <body onload="init()">
         <div id="map"></div>
