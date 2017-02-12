@@ -4,10 +4,8 @@
 
 const express = require('express');
 const bluebird = require('bluebird');
-const dust = require('dustjs-linkedin');
 const morgan = require('morgan');
 const path = require('path');
-const fs = require('fs');
 
 const db = require('./src/db/init');
 const save = require('./src/db/save');
@@ -38,14 +36,7 @@ io.on('connection', () => {
 });
 
 app.get('/', (req, res) => {
-    fs.readFile(path.join(__dirname, 'public/pages/main.dust'), "utf8", (err, template) => {
-        const compiled = dust.compile(template, "main");
-        dust.loadSource(compiled);
-
-        dust.render("main", {}, (err, html) => {
-            res.send(html);
-        });
-    });
+    res.sendFile(path.join(__dirname, 'public/pages/main.html'));
 });
 
 app.get('/bounds', (req, res) => {
