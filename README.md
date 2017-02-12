@@ -11,6 +11,6 @@ but will have limits on it, which may be far too low to enable to application to
         }
     };
     
-Then you will need to run `mongod`, `npm i` and finally `node app.js`. Visit `localhost:3000` to see it in action.
+Then you will need to run `mongod`, `npm i` and then `gulp`. Visit `localhost:3000` to see it in action.
 
 Requires node >6
