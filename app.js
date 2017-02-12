@@ -86,6 +86,19 @@ app.get('/routes', (req, res) => {
     });
 });
 
+app.get('/linesandroutes', (req, res) => {
+    bluebird.all([
+        retrieve.allLines(),
+        retrieve.allRoutesOnAllLines()
+    ]).spread((lines, routes) => {
+        res.json({
+            lines,
+            routes: bunch(routes)
+        });
+        res.end();
+    });
+});
+
 server.listen(process.env.PORT || 3000, () => {
     console.log('Listening on port 3000');
     db();

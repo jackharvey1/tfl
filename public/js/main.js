@@ -1,7 +1,6 @@
 /* eslint no-var: off, vars-on-top:off, no-undef: off, no-unused-vars:off, init-declarations: off */
 
 let map;
-let socket;
 
 let bounds, stations, lines, routes;
 const markers = [];
@@ -33,11 +32,11 @@ const blinkIcon = L.icon({
     popupAnchor: [0, -markerSize / 2]
 });
 
-function fetch(url) {
-    return new Promise((resolve) => {
-        $.ajax(url).done((data) => {
-            resolve(data);
-        });
+function fetch(url, cb) {
+    $.ajax(url).done((data) => {
+        if (cb) {
+            return cb(data);
+        }
     });
 }
 
@@ -103,32 +102,27 @@ function createMap() {
 }
 
 window.onload = function() {
-    fetch('/bounds').then((stats) => {
+    fetch('/bounds', (stats) => {
         bounds = new L.LatLngBounds([
             [stats.lat.max + 0.01, stats.lon.max + 0.01],
             [stats.lat.min - 0.01, stats.lon.min - 0.01]
         ]);
 
         createMap();
-    })
-    .then(fetch('/stations/all')
-        .then((stations) => {
-            return new Promise((resolve) => {
-                createStationMarkers(stations, stationIcon);
-                resolve();
-            });
-        })
-    )
-    .then(fetch('/lines').then((lines) => {
-        fetch('/routes').then((routes) => {
-            drawLines(lines, routes);
-        });
-    }))
-    .then(initiateSocketListener);
+    });
+
+    fetch('/stations/all', (stations) => {
+        createStationMarkers(stations, stationIcon);
+        initiateSocketListener();
+    });
+
+    fetch('/linesandroutes', (linesAndRoutes) => {
+        drawLines(linesAndRoutes.lines, linesAndRoutes.routes);
+    });
 };
 
 function initiateSocketListener() {
-    socket = io();
+    const socket = io();
 
     socket.on('arrivalsNow', (arrivals) => {
         if (arrivals.length > 0) {
