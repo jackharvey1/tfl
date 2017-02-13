@@ -7,14 +7,14 @@ const bluebird = require('bluebird');
 const morgan = require('morgan');
 const path = require('path');
 
-const db = require('./src/db/init');
-const save = require('./src/db/save');
-const retrieve = require('./src/db/retrieve');
-const utils = require('./src/db/utils');
-const max = require('./src/helpers/db').max;
-const min = require('./src/helpers/db').min;
-const models = require('./src/db/models');
-const bunch = require('./src/helpers/utils').bunchDuplicatePointPairs;
+const db = require('./db/init');
+const save = require('./db/save');
+const retrieve = require('./db/retrieve');
+const utils = require('./db/utils');
+const max = require('./db/helpers').max;
+const min = require('./db/helpers').min;
+const models = require('./db/models');
+const bunch = require('./helpers/utils').bunchDuplicatePointPairs;
 
 require('console-stamp')(console, 'HH:MM:ss.l');
 

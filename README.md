@@ -1,7 +1,7 @@
 # tfl
 
-In order to run you will need to get an app id and key by registering [here](https://api-portal.tfl.gov.uk/signup). It will run without 
-but will have limits on it, which may be far too low to enable to application to run. You can then use these either as `APP_ID=` and 
+In order to run you will need to get an app id and key by registering [here](https://api-portal.tfl.gov.uk/signup). It will run without
+but will have limits on it, which may be far too low to enable to application to run. You can then use these either as `APP_ID=` and
 `APP_KEY=` or by creating a file `config/config.js` with the form
 
     module.exports = {
@@ -10,7 +10,7 @@ but will have limits on it, which may be far too low to enable to application to
             'key': 'app-key'
         }
     };
-    
-Then you will need to run `mongod`, `npm i` and then `gulp`. Visit `localhost:3000` to see it in action.
+
+Then you will need to run `mongod`, `npm i` and then `cd src && gulp`. Visit `localhost:3000` to see it in action.
 
 Requires node >6

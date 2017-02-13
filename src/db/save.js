@@ -1,7 +1,7 @@
 'use strict';
 
 const bluebird = require('bluebird');
-const tfl = require('../js/tfl');
+const tfl = require('../tfl/api');
 const models = require('./models');
 const parseSaveResults = require('./utils').parseSaveResults;
 const lineColours = require('../resources/line-colours.json');
