@@ -114,26 +114,28 @@ server.listen(process.env.PORT || 3000, () => {
             });
         });
     } else {
-        save.allLines().then(() => {
-            save.allRoutesOnAllLines().then(() => {
-                save.allStationsOnAllLines().then(() => {
-                    setInterval(utils.cleanArrivals, 60 * 1000);
+        save.allLines()
+            .then(save.allRoutesOnAllLines)
+            .then(save.allStationsOnAllLines)
+            .then(save.allArrivalsAtAllStations)
+            .then(() => {
+                setInterval(utils.cleanArrivals, 60 * 1000);
 
-                    setInterval(save.allArrivalsAtAllStations, 30 * 1000);
+                setInterval(save.allArrivalsAtAllStations, 30 * 1000);
 
-                    setInterval(() => {
-                        utils.runArrivalCheckJob().then((arrivals) => {
-                            io.emit('arrivalsNow', arrivals);
-                        });
-                    }, 1000);
+                setInterval(() => {
+                    utils.runArrivalCheckJob().then((arrivals) => {
+                        io.emit('arrivalsNow', arrivals);
+                    });
+                }, 1000);
 
-                    setInterval(() => {
-                        utils.getNextArrivalsAtAllStations().then((arrivals) => {
-                            io.emit('stationArrivals', arrivals);
-                        });
-                    }, 15 * 1000);
-                });
+                setInterval(() => {
+                    utils.getNextArrivalsAtAllStations().then((arrivals) => {
+                        io.emit('stationArrivals', arrivals);
+                    });
+                }, 15 * 1000);
+
+                console.info('Jobs queued');
             });
-        });
     }
 });

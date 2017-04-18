@@ -123,6 +123,8 @@ module.exports.getAllRoutesOnAllLines = function() {
         host: 'api.tfl.gov.uk'
     };
 
+    console.info(`Retrieving all routes on all lines`);
+
     return retrieve.allLines().then((lines) => {
         return bluebird.map(lines, (line) => {
             options.path = `/Line/${line.id}/Route/Sequence/outbound?excludeCrowding=false&serviceTypes=regular,night&app_key=${appKey}&app_id=${appId}`;
