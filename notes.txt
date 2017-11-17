@@ -1,5 +1,0 @@
-# TODO
-
-# PROBLEMS
-Is having to have the db running for tests to pass bad? If so, how do I mock it out? Fails on `mongoose.connect`.
-`module.exports`, e.g. `module.exports.makeRequest` is needed for tests. Is there a way to not do this?
