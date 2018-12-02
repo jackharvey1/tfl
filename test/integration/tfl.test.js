@@ -1,5 +1,5 @@
 /* global sandbox, expect */
-const tfl = require('../../src/js/tfl');
+const tfl = require('../../src/tfl/api');
 const retrieve = require('../../src/db/retrieve');
 
 const lines = require('../resources/lines.json');

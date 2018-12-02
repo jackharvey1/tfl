@@ -1,5 +1,3 @@
-/* eslint no-invalid-this:off */
-
 'use strict';
 
 const express = require('express');
@@ -23,6 +21,8 @@ const Station = models.Station;
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
+
+const port = process.env.PORT || 3000;
 
 app.use(morgan('combined'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -99,8 +99,8 @@ app.get('/linesandroutes', (req, res) => {
     });
 });
 
-server.listen(process.env.PORT || 3000, () => {
-    console.log('Listening on port 3000');
+server.listen(port, () => {
+    console.log(`Listening on port ${port}`);
     db();
 
     if (process.env.NODE_ENV === 'clean') {
