@@ -1,5 +1,3 @@
-/* eslint no-invalid-this:off */
-
 'use strict';
 
 const express = require('express');
