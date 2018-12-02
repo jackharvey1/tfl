@@ -4,3 +4,7 @@ node_module
 node_modules
 maps
 main.min.js
+
+*.tfstate*
+.terraform
+.credentials
