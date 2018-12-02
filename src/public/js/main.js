@@ -33,10 +33,19 @@ const blinkIcon = L.icon({
 });
 
 function fetch(url, cb) {
-    $.ajax(url).done((data) => {
-        if (cb) {
-            return cb(data);
-        }
+    return new Promise((resolve, reject) => {
+        const xmlHttpRequest = new XMLHttpRequest();
+        xmlHttpRequest.addEventListener("readystatechange", () => {
+            if (xmlHttpRequest.readyState === 4) {
+                if (xmlHttpRequest.status === 200) {
+                    resolve(JSON.parse(xmlHttpRequest.responseText));
+                } else {
+                    reject(JSON.parse(xmlHttpRequest.responseText));
+                }
+            }
+        });
+        xmlHttpRequest.open("GET", url);
+        xmlHttpRequest.send();
     });
 }
 
@@ -101,24 +110,27 @@ function createMap() {
     map.scrollWheelZoom.disable();
 }
 
+function constructMap(stats) {
+    bounds = new L.LatLngBounds([
+        [stats.lat.max + 0.01, stats.lon.max + 0.01],
+        [stats.lat.min - 0.01, stats.lon.min - 0.01]
+    ]);
+
+    createMap();
+}
+
 window.onload = function() {
-    fetch('/bounds', (stats) => {
-        bounds = new L.LatLngBounds([
-            [stats.lat.max + 0.01, stats.lon.max + 0.01],
-            [stats.lat.min - 0.01, stats.lon.min - 0.01]
-        ]);
-
-        createMap();
-    });
-
-    fetch('/stations/all', (stations) => {
-        createStationMarkers(stations, stationIcon);
-        initiateSocketListener();
-    });
-
-    fetch('/linesandroutes', (linesAndRoutes) => {
-        drawLines(linesAndRoutes.lines, linesAndRoutes.routes);
-    });
+    fetch('/bounds')
+        .then(constructMap)
+        .then(() => fetch('/stations/all'))
+        .then((stations) => {
+            createStationMarkers(stations, stationIcon);
+            initiateSocketListener();
+        })
+        .then(() => fetch('/linesandroutes'))
+        .then((linesAndRoutes) => {
+            drawLines(linesAndRoutes.lines, linesAndRoutes.routes);
+        });
 };
 
 function initiateSocketListener() {
