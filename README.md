@@ -1,6 +1,6 @@
 # tfl
 
-![gif](http://i.imgur.com/vaELaUp.jpg)
+![gif](https://github.com/jackharvey1/tfl/blob/master/demo.gif)
 
 ## Setup
 
