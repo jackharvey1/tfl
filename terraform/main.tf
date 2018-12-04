@@ -20,6 +20,10 @@ data "aws_ami" "ec2_ami" {
     tags                    = "${var.tags}"
 }
 
+data "aws_route53_zone" "hosted_zone" {
+  name = "${var.domain}."
+}
+
 resource "aws_key_pair" "ssh" {
     key_name   = "default"
     public_key = "${file("~/.ssh/id_rsa.pub")}"
@@ -67,7 +71,7 @@ resource "aws_security_group" "allow_http" {
 }
 
 resource "aws_route53_record" "tfl" {
-  zone_id = "${var.hosted_zone_id}"
+  zone_id = "${data.aws_route53_zone.hosted_zone.zone_id}"
   name    = "tfl.${var.domain}"
   type    = "A"
   ttl     = "300"
