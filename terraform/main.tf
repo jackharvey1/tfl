@@ -1,3 +1,11 @@
+terraform {
+    backend "s3" {
+        bucket = "jackharvey-terraform-state"
+        key    = "tfl"
+        region = "eu-west-2"
+    }
+}
+
 provider "aws" {
     region  = "eu-west-2"
     profile = "personal"
